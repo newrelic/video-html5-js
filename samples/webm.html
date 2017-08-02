@@ -7,6 +7,7 @@
     ;NREUM.info={beacon:"staging-bam.nr-data.net",errorBeacon:"staging-bam.nr-data.net",licenseKey:"bce7245a82",applicationID:"1652785",sa:1}
   </script>
   <script src="../dist/newrelic-video-html5.min.js"></script>
+  <script>nrvideo.Log.level = nrvideo.Log.Levels.ALL</script>
 </head>
 
 <body>
@@ -14,10 +15,8 @@
     <source src="http://video.webmfiles.org/big-buck-bunny_trailer.webm" type='video/mp4'>
   </video>
     <script>
-      nrvideo.Log.level = nrvideo.Log.Levels.DEBUG
       var myPlayer = document.getElementById('myPlayer')
-      var tracker = new nrvideo.Html5Tracker({ player: myPlayer })
-      nrvideo.Core.addTracker(tracker)
+      nrvideo.Core.addTracker(new nrvideo.Html5Tracker(myPlayer))
     </script>
 </body>
 
