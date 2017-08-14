@@ -33,14 +33,6 @@ export default class Html5Tracker extends nrvideo.Tracker {
     return this.player.playbackRate
   }
 
-  getWidth () {
-    return this.player.width
-  }
-
-  getHeight () {
-    return this.player.height
-  }
-
   isAutoplayed () {
     return this.player.autoplay
   }
