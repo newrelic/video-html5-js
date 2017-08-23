@@ -112,7 +112,7 @@ export default class Html5Tracker extends nrvideo.Tracker {
       this.player.networkState === this.player.NETWORK_LOADING &&
       this.player.readyState < this.player.HAVE_FUTURE_DATA
     ) {
-      this.sendBuffeStart()
+      this.sendBufferStart()
     }
   }
 }
