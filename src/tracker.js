@@ -1,6 +1,6 @@
 import * as nrvideo from 'newrelic-video-core'
 
-export default class Html5Tracker extends nrvideo.Tracker {
+export default class Html5Tracker extends nrvideo.VideoTracker {
   getTrackerName () {
     return 'html5'
   }
