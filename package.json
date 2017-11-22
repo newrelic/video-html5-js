@@ -10,7 +10,8 @@
     "watch:dev": "webpack --progress --color --watch",
     "prezip": "npm run build",
     "zip": "zip -P newrelic -x '*.DS_Store' -r html5.zip dist samples README.md CHANGELOG.md EULA.md",
-    "clean": "rm -rf dist *.zip"
+    "clean": "rm -rf dist *.zip",
+    "deploy": "node scripts/deploy.js"    
   },
   "repository": {
     "type": "git",
