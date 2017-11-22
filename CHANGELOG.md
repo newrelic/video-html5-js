@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+
+## [0.1.2] - 2017/11/22
+### Fix
+- Fix `duration` and `playhead` not being reported in ms.
 
 ## [0.1.1] - 2017/10/26
 ### Lib

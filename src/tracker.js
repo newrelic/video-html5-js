@@ -6,11 +6,11 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
   }
 
   getPlayhead () {
-    return this.player.currentTime
+    return this.player.currentTime * 1000
   }
 
   getDuration () {
-    return this.player.duration
+    return this.player.duration * 1000
   }
 
   getSrc () {
