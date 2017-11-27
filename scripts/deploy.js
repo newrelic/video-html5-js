@@ -56,17 +56,16 @@ uploadFile('package.json', path.join(__dirname, '..'), baseDir)
 
 // copy agent.js
 s3.copyObject({
-  Bucket: 'nr-video-samples', 
-  CopySource: 'nr-video-samples/agent.js', 
+  Bucket: 'nr-video-samples',
+  CopySource: 'nr-video-samples/agent.js',
   Key: baseDir + 'samples/agent.js'
- }, function(err, data) {
-   if (err) {
+}, function (err, data) {
+  if (err) {
     console.log(err, err.stack)
-   } else {
+  } else {
     console.log(`Successfuly copied 'agent.js' to '${baseDir}samples/agent.js'.`)
-   }
- }
-)
+  }
+})
 
 // upload folders
 function uploadFolder (originPath, targetPath) {
@@ -77,8 +76,7 @@ function uploadFolder (originPath, targetPath) {
     if (targetPath[targetPath.length - 1] !== '/') targetPath += '/'
 
     if (!files || files.length === 0) {
-      console.log(`provided folder '${originPath}' is empty or does not exist.`)
-      console.log('Make sure your project was compiled!')
+      console.log(`Provided folder '${originPath}' is empty or does not exist.`)
       return
     }
 
@@ -98,7 +96,7 @@ function uploadFile (fileName, originPath, targetPath) {
 
     // recurse if directory
   if (fs.lstatSync(filePath).isDirectory()) {
-    uploadFolder(originPath, targetPath)
+    uploadFolder(originPath + '/' + fileName, targetPath + fileName)
   } else {
   // read file contents
     fs.readFile(filePath, (error, fileContent) => {
