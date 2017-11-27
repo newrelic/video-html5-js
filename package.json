@@ -18,7 +18,7 @@
     "url": "https://github.com/newrelic/video-html5-js.git"
   },
   "author": "Jordi Aguilar",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "newrelic-video-core": "git+https://github.com/newrelic/video-core-js.git#v0.9.1"
   },
