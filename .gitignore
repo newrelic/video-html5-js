@@ -18,3 +18,4 @@ coverage/
 
 # logs
 *.log
+samples/agent.js

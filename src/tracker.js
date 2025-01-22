@@ -123,8 +123,9 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     this.sendSeekEnd();
   }
 
-  onError() {
-    this.sendError();
+  onError(e) {
+    // not getting errorcode and error message;
+    this.sendError({error: e});
   }
 
   onEnded() {
