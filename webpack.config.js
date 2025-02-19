@@ -1,40 +1,46 @@
-var path = require("path");
-var webpack = require("webpack");
+var path = require('path');
+var webpack = require('webpack');
+var TerserPlugin = require('terser-webpack-plugin');
 
-var pkg = require("./package.json");
+var pkg = require('./package.json');
 var license =
-  "@license " +
+  '@license ' +
   pkg.license +
-  "\n" +
+  '\n' +
   pkg.name +
-  " " +
+  ' ' +
   pkg.version +
-  "\nCopyright New Relic <http://newrelic.com/>" +
-  "\n@author " +
+  '\nCopyright New Relic <http://newrelic.com/>' +
+  '\n@author ' +
   pkg.author;
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: pkg.name + ".min.js",
-    library: "nrvideo",
-    libraryTarget: "umd",
+    path: path.resolve(__dirname, './dist'),
+    filename: pkg.name + '.min.js',
+    library: 'nrvideo',
+    libraryTarget: 'umd',
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.js$/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: [["@babel/preset-env", { targets: "defaults" }]],
+            presets: [['@babel/preset-env', { targets: 'defaults' }]],
           },
         },
       },
     ],
   },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
+
   plugins: [
     new webpack.BannerPlugin({
       banner: license,
