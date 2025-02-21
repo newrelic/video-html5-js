@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - 2025/02/21
+
+### New Event Type Introduced [VideoAction, VideoErrorAction, VideoAdAction, VideoCustomAction]
+
+- PageAction Deprecated.
+- New Attributes Introduced.
+
 ## [0.2.2] - 2024/12/01
 
 - Upgraded babel and npm dependency and add Player Name ="HTML5" and Player version = "package.json version"
