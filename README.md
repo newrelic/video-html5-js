@@ -38,7 +38,7 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
 nrvideo.Core.addTracker(new nrvideo.Html5Tracker(player));
 
 // For setting userId
-nrvideo.Core.addTracker(new nrvideo.Html5Tracker(player)).setUserId('userId');
+tracker.setUserId('userId');
 
 //For setting custom attributes const tracker
 const tracker = new nrvideo.Html5jsTracker(player, {
