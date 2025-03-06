@@ -1,118 +1,143 @@
-import * as nrvideo from 'newrelic-video-core'
+import * as nrvideo from 'newrelic-video-core';
+import pkg from '../package.json';
 
 export default class Html5Tracker extends nrvideo.VideoTracker {
-  getTrackerName () {
-    return 'html5'
+  constructor(player) {
+    super(player);
+  }
+  getTrackerName() {
+    return 'html5';
   }
 
-  getPlayhead () {
-    return this.player.currentTime * 1000
+  getPlayerName() {
+    return 'HTML5';
   }
 
-  getDuration () {
-    return this.player.duration * 1000
+  getInstrumentationProvider() {
+    return 'New Relic';
   }
 
-  getSrc () {
-    return this.player.currentSrc
+  getInstrumentationName() {
+    return this.getPlayerName();
   }
 
-  isMuted () {
-    return this.player.muted
+  getInstrumentationVersion() {
+    return this.getPlayerVersion();
   }
 
-  getRenditionHeight () {
-    return this.player.videoHeight
+  getPlayerVersion() {
+    return pkg.version;
   }
 
-  getRenditionWidth () {
-    return this.player.videoWidth
+  getPlayhead() {
+    return this.player.currentTime * 1000;
   }
 
-  getPlayrate () {
-    return this.player.playbackRate
+  getDuration() {
+    return this.player.duration * 1000;
   }
 
-  isAutoplayed () {
-    return this.player.autoplay
+  getSrc() {
+    return this.player.currentSrc;
   }
 
-  getPreload () {
-    return this.player.preload
+  isMuted() {
+    return this.player.muted;
   }
 
-  registerListeners () {
-    nrvideo.Log.debugCommonVideoEvents(this.player)
-
-    this.player.addEventListener('loadstart', this.onDownload.bind(this))
-    this.player.addEventListener('loadedmetadata', this.onDownload.bind(this))
-    this.player.addEventListener('loadeddata', this.onDownload.bind(this))
-    this.player.addEventListener('canplay', this.onDownload.bind(this))
-    this.player.addEventListener('play', this.onPlay.bind(this))
-    this.player.addEventListener('playing', this.onPlaying.bind(this))
-    this.player.addEventListener('pause', this.onPause.bind(this))
-    this.player.addEventListener('seeking', this.onSeeking.bind(this))
-    this.player.addEventListener('seeked', this.onSeeked.bind(this))
-    this.player.addEventListener('error', this.onError.bind(this))
-    this.player.addEventListener('ended', this.onEnded.bind(this))
-    this.player.addEventListener('waiting', this.onWaiting.bind(this))
+  getRenditionHeight() {
+    return this.player.videoHeight;
   }
 
-  unregisterListeners () {
-    this.player.removeEventListener('loadstart', this.onDownload)
-    this.player.removeEventListener('loadedmetadata', this.onDownload)
-    this.player.removeEventListener('loadeddata', this.onDownload)
-    this.player.removeEventListener('canplay', this.onDownload)
-    this.player.removeEventListener('play', this.onPlay)
-    this.player.removeEventListener('playing', this.onPlaying)
-    this.player.removeEventListener('pause', this.onPause)
-    this.player.removeEventListener('seeking', this.onSeeking)
-    this.player.removeEventListener('seeked', this.onSeeked)
-    this.player.removeEventListener('error', this.onError)
-    this.player.removeEventListener('ended', this.onEnded)
-    this.player.removeEventListener('waiting', this.onWaiting)
+  getRenditionWidth() {
+    return this.player.videoWidth;
   }
 
-  onDownload (e) {
-    this.sendDownload({ state: e.type })
+  getPlayrate() {
+    return this.player.playbackRate;
   }
 
-  onPlay () {
-    this.sendRequest()
+  isAutoplayed() {
+    return this.player.autoplay;
   }
 
-  onPlaying () {
-    this.sendBufferEnd()
-    this.sendResume()
-    this.sendStart()
+  getPreload() {
+    return this.player.preload;
   }
 
-  onPause () {
-    this.sendPause()
+  registerListeners() {
+    nrvideo.Log.debugCommonVideoEvents(this.player);
+
+    this.player.addEventListener('loadstart', this.onDownload.bind(this));
+    this.player.addEventListener('loadedmetadata', this.onDownload.bind(this));
+    this.player.addEventListener('loadeddata', this.onDownload.bind(this));
+    this.player.addEventListener('canplay', this.onDownload.bind(this));
+    this.player.addEventListener('play', this.onPlay.bind(this));
+    this.player.addEventListener('playing', this.onPlaying.bind(this));
+    this.player.addEventListener('pause', this.onPause.bind(this));
+    this.player.addEventListener('seeking', this.onSeeking.bind(this));
+    this.player.addEventListener('seeked', this.onSeeked.bind(this));
+    this.player.addEventListener('error', this.onError.bind(this));
+    this.player.addEventListener('ended', this.onEnded.bind(this));
+    this.player.addEventListener('waiting', this.onWaiting.bind(this));
   }
 
-  onSeeking () {
-    this.sendSeekStart()
+  unregisterListeners() {
+    this.player.removeEventListener('loadstart', this.onDownload);
+    this.player.removeEventListener('loadedmetadata', this.onDownload);
+    this.player.removeEventListener('loadeddata', this.onDownload);
+    this.player.removeEventListener('canplay', this.onDownload);
+    this.player.removeEventListener('play', this.onPlay);
+    this.player.removeEventListener('playing', this.onPlaying);
+    this.player.removeEventListener('pause', this.onPause);
+    this.player.removeEventListener('seeking', this.onSeeking);
+    this.player.removeEventListener('seeked', this.onSeeked);
+    this.player.removeEventListener('error', this.onError);
+    this.player.removeEventListener('ended', this.onEnded);
+    this.player.removeEventListener('waiting', this.onWaiting);
   }
 
-  onSeeked () {
-    this.sendSeekEnd()
+  onDownload(e) {
+    this.sendDownload({ state: e.type });
   }
 
-  onError () {
-    this.sendError()
+  onPlay() {
+    this.sendRequest();
   }
 
-  onEnded () {
-    this.sendEnd()
+  onPlaying() {
+    this.sendBufferEnd();
+    this.sendResume();
+    this.sendStart();
   }
 
-  onWaiting () {
+  onPause() {
+    this.sendPause();
+  }
+
+  onSeeking() {
+    this.sendSeekStart();
+  }
+
+  onSeeked() {
+    this.sendSeekEnd();
+  }
+
+  onError(e) {
+    // not getting errorcode and error message;
+    this.sendError({error: e});
+  }
+
+  onEnded() {
+    this.sendEnd();
+  }
+
+  onWaiting() {
     if (
       this.player.networkState === this.player.NETWORK_LOADING &&
       this.player.readyState < this.player.HAVE_FUTURE_DATA
     ) {
-      this.sendBufferStart()
+      this.sendBufferStart();
     }
   }
 }
