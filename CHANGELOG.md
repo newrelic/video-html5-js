@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.1] - 2025-05-14
+
+### Enhancements
+
+* **Publishing to npm:** The package can now be published to npm, making it easily accessible.
+
+### Build
+
+* **Distribution Formats:** Added `cjs`, `esm`, and `umd` builds to the `dist` folder, ensuring compatibility with CommonJS, ES Modules, and UMD module formats.
+
 ## [3.0.0] - 2025/02/21
 
 ### New Event Type Introduced [VideoAction, VideoErrorAction, VideoAdAction, VideoCustomAction]
