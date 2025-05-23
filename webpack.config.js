@@ -63,7 +63,6 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, "./dist/cjs"),
       filename: "index.js",
-      library: "nrvideo",
       libraryTarget: "commonjs2", // CommonJS format
     },
     devtool: "source-map",
