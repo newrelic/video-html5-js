@@ -63,6 +63,7 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, "./dist/cjs"),
       filename: "index.js",
+      library: "HTML5Tracker",
       libraryTarget: "commonjs2", // CommonJS format
     },
     devtool: "source-map",
