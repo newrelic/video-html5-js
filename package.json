@@ -22,7 +22,7 @@
   "author": "Jordi Aguilar",
   "license": "MIT",
   "dependencies": {
-     "@newrelic/video-core": "^3.0.1"
+     "@newrelic/video-core": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
