@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1] - 2025-05-28
+
+### Fix
+
+- Fix UMD build to expose Html5Tracker as the global variable.
+
 ## [3.1.0] - 2025-05-26
 
 ### Enhancements

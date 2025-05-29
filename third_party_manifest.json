@@ -1,19 +1,20 @@
 {
-  "lastUpdated": "Thu May 22 2025 21:41:48 GMT+0530 (India Standard Time)",
+  "lastUpdated": "Wed May 28 2025 17:07:37 GMT+0530 (India Standard Time)",
   "projectName": "video-html5",
   "projectUrl": "https://github.com/newrelic/video-html5-js",
   "includeOptDeps": true,
+  "optionalDependencies": {},
   "includeDev": true,
   "dependencies": {
-    "@newrelic/video-core@3.0.1": {
+    "@newrelic/video-core@3.1.0": {
       "name": "@newrelic/video-core",
-      "version": "3.0.1",
-      "range": "^3.0.1",
+      "version": "3.1.0",
+      "range": "^3.1.0",
       "licenses": "MIT",
       "repoUrl": "https://github.com/newrelic/video-core-js",
-      "versionedRepoUrl": "https://github.com/newrelic/video-core-js/tree/v3.0.1",
+      "versionedRepoUrl": "https://github.com/newrelic/video-core-js/tree/v3.1.0",
       "licenseFile": "node_modules/@newrelic/video-core/LICENSE.txt",
-      "licenseUrl": "https://github.com/newrelic/video-core-js/blob/v3.0.1/LICENSE.txt",
+      "licenseUrl": "https://github.com/newrelic/video-core-js/blob/v3.1.0/LICENSE.txt",
       "licenseTextSource": "file",
       "publisher": "Jordi Aguilar"
     }
@@ -131,6 +132,5 @@
       "licenseTextSource": "file",
       "publisher": "Tobias Koppers @sokra"
     }
-  },
-  "optionalDependencies": {}
+  }
 }

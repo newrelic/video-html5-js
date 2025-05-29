@@ -22,7 +22,7 @@ module.exports = [
   output: {
     path: path.resolve(__dirname, './dist/umd'),
     filename: 'newrelic-video-html5.min.js',
-    library: 'HTML5Tracker',
+    library: 'Html5Tracker',
     libraryTarget: 'umd',
     libraryExport: "default", 
   },
@@ -63,7 +63,7 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, "./dist/cjs"),
       filename: "index.js",
-      library: "HTML5Tracker",
+      library: "Html5Tracker",
       libraryTarget: "commonjs2", // CommonJS format
     },
     devtool: "source-map",
