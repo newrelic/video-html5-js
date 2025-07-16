@@ -5,7 +5,7 @@
     <script type="text/javascript" src="agent.js"></script>
 
     <!-- new relic tracker -->
-    <script src="../dist/newrelic-video-html5.min.js"></script>
+    <script src="../dist/umd/newrelic-video-html5.min.js"></script>
   </head>
 
   <body>
@@ -17,7 +17,7 @@
     </video>
     <script>
       var myPlayer = document.getElementById("myPlayer");
-      nrvideo.Core.addTracker(new nrvideo.Html5Tracker(myPlayer));
+      const tracker  = new Html5Tracker(myPlayer);
     </script>
   </body>
 </html>

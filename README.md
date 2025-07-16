@@ -31,14 +31,29 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
 </html>
 ```
 
+## Adding the agent package to your project
+
+To make the tracker available to your application, install via [NPM](https://docs.npmjs.com/cli/v8/commands/npm-install) or [Yarn](https://classic.yarnpkg.com/lang/en/docs/cli/install/).
+
+```shell
+$ npm install @newrelic/video-html5
+```
+
+```shell
+$ yarn add @newrelic/video-html5
+```
+
 ## Instantiating the Html5 Tracker
 
 ```javascript
+// Add import statement
+import Html5Tracker from '@newrelic/video-html5';
+
 // Add a Html5Tracker
-nrvideo.Core.addTracker(new nrvideo.Html5Tracker(player));
+const tracker = new Html5Tracker(videoInstance);
 
 //For setting custom attributes const tracker
-const tracker = new nrvideo.Html5jsTracker(player, {
+const tracker = new Html5Tracker(player, {
   customData: {
     contentTitle: 'Override Existing Title',
     customPlayerName: 'myGreatPlayer',
@@ -51,9 +66,7 @@ tracker.setUserId('userId');
 
 // For Sending custom Action with Attributes
 
-const tracker = new nrvideo.Html5Tracker(player);
-
-nrvideo.Core.addTracker(tracker);
+const tracker = new Html5Tracker(player);
 
 tracker.sendCustom('CUSTOM_ACTION', 'state time', {
   test1: 'value1',
