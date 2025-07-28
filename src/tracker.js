@@ -2,9 +2,9 @@ import nrvideo from '@newrelic/video-core';
 import pkg from '../package.json';
 
 export default class Html5Tracker extends nrvideo.VideoTracker {
-  constructor(player) {
-    super(player);
-    nrvideo.Core.addTracker(this);
+  constructor(player, options) {
+    super(player, options);
+    nrvideo.Core.addTracker(this, options);
   }
   getTrackerName() {
     return 'html5';
@@ -126,7 +126,7 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
 
   onError(e) {
     // not getting errorcode and error message;
-    this.sendError({error: e});
+    this.sendError({ error: e });
   }
 
   onEnded() {
