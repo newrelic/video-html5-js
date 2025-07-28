@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var TerserPlugin = require('terser-webpack-plugin');
+var WebpackObfuscator = require('webpack-obfuscator');
 
 var pkg = require('./package.json');
 var license =
