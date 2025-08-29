@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+### Update
+
+## [4.0.0] - 2025-07-28
+
+### Changed
+
+- **Standalone Agent:** This tracker now operates independently with its own authorization details, removing the dependency on a browser agent.
+
 ## [3.1.1] - 2025-05-28
 
 ### Fix
@@ -12,11 +20,11 @@ All notable changes to this project will be documented in this file.
 
 ### Enhancements
 
-* **Publishing to npm:** The package can now be published to npm, making it easily accessible.
+- **Publishing to npm:** The package can now be published to npm, making it easily accessible.
 
 ### Build
 
-* **Distribution Formats:** Added `cjs`, `esm`, and `umd` builds to the `dist` folder, ensuring compatibility with CommonJS, ES Modules, and UMD module formats.
+- **Distribution Formats:** Added `cjs`, `esm`, and `umd` builds to the `dist` folder, ensuring compatibility with CommonJS, ES Modules, and UMD module formats.
 
 ## [3.0.0] - 2025/02/21
 

@@ -6,13 +6,12 @@ The New Relic Html5 Tracker enhances your media applications by tracking video e
 
 - The Html5 tracker is available as a ready-to-use JavaScript snippet for easy copy-paste integration.
 - New Relic Html5 tracker auto-detects events emitted by Html5 Player.
-- Ensure that the **Browser agent** is successfully instrumented before deploying the media tracker.
 - For questions and feedback on this package, please visit the [Explorer's Hub](https://discuss.newrelic.com), New Relic's community support forum.
 - Looking to contribute to the Player Name agent code base? See [DEVELOPING.md](./DEVELOPING.md) for instructions on building and testing the browser agent library, and Contributors.
 
 ## Adding The Html5 Tracker To Your Project
 
-To integrate New Relic Tracker Agent into your web application effectively, you'll need to instrument the Browser Agent code first and then add the player script. Below is a guide on how to do this within your HTML file:
+To integrate New Relic Tracker Agent into your web application effectively, Below is a guide on how to do this within your HTML file, if you want to with snippet code
 
 ```html
 <!DOCTYPE html>
@@ -21,8 +20,8 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Relic Tracker Integration</title>
-    <script src="path/to/browser-agent.js"></script>
-    <!-- snippet code generated  -->
+
+    <!-- snippet code generated get it from new relic onboarding steps -->
     <script src="path/to/Html5-tracker.js"></script>
   </head>
   <body>
@@ -49,11 +48,23 @@ $ yarn add @newrelic/video-html5
 // Add import statement
 import Html5Tracker from '@newrelic/video-html5';
 
-// Add a Html5Tracker
-const tracker = new Html5Tracker(videoInstance);
+// Get Application info from onboarding steps of new relic, from tiles Place a JavaScript Snippet Code
+const options = {
+  info: {
+    beacon: 'xxxxxxxxxx',
+    applicationID: 'xxxxxxx',
+    licenseKey: 'xxxxxxxxxxx',
+  },
+};
 
-//For setting custom attributes const tracker
-const tracker = new Html5Tracker(player, {
+// Add a Html5Tracker
+const tracker = new Html5Tracker(videoInstance, options);
+
+// For setting userId
+tracker.setUserId('userId');
+
+// For Sending custom Attributes
+tracker.sendOptions({
   customData: {
     contentTitle: 'Override Existing Title',
     customPlayerName: 'myGreatPlayer',
@@ -61,17 +72,14 @@ const tracker = new Html5Tracker(player, {
   },
 });
 
-// For setting userId
-tracker.setUserId('userId');
-
-// For Sending custom Action with Attributes
-
-const tracker = new Html5Tracker(player);
-
+// For sending Custom Video Action
 tracker.sendCustom('CUSTOM_ACTION', 'state time', {
   test1: 'value1',
   test2: 'value2',
 });
+
+// For setting different harvest interval (1s to 5 mins)
+tracker.setHarvestInterval(40000); // setting for 40 secs
 ```
 
 ## Data Model

@@ -37,7 +37,17 @@ Load **scripts** inside `dist` folder into your page.
 ```
 
 ```javascript
-nrvideo.Core.addTracker(new nrvideo.Html5Tracker(player));
+
+const options = {
+        info: {
+          beacon: 'bam.nr-data.net',
+          licenseKey: 'NRBR-298f449004b949aad61',
+          applicationID: '601579909',
+          region: 'US',
+        },
+      };
+
+new nrvideo.Html5Tracker(player, options));
 ```
 
 ## Release
