@@ -20,7 +20,7 @@
     "url": "https://github.com/newrelic/video-html5-js.git"
   },
   "author": "Jordi Aguilar",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@newrelic/video-core": "^4.0.0"
   },
@@ -40,7 +40,8 @@
     "src",
     "CHANGELOG.md",
     "README.md",
-    "!test"
+    "!test",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"
