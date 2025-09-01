@@ -35,7 +35,7 @@ code, the source code can be found at [https://github.com/newrelic/video-html5-j
 
 ### @newrelic/video-core
 
-This product includes source derived from [@newrelic/video-core](https://github.com/newrelic/video-core-js) ([v3.1.1](https://github.com/newrelic/video-core-js/tree/v3.1.1)), distributed under the [Apache-2.0 License](https://github.com/newrelic/video-core-js/blob/v3.1.1/LICENSE):
+This product includes source derived from [@newrelic/video-core](https://github.com/newrelic/video-core-js) ([v4.0.0](https://github.com/newrelic/video-core-js/tree/v4.0.0)), distributed under the [Apache-2.0 License](https://github.com/newrelic/video-core-js/blob/v4.0.0/LICENSE):
 
 ```
                                  Apache License

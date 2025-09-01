@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "Fri Aug 29 2025 15:36:51 GMT+0530 (India Standard Time)",
+  "lastUpdated": "Tue Sep 02 2025 00:24:01 GMT+0530 (India Standard Time)",
   "projectName": "video-html5",
   "projectUrl": "https://github.com/newrelic/video-html5-js",
   "includeOptDeps": true,
   "optionalDependencies": {},
   "includeDev": true,
   "dependencies": {
-    "@newrelic/video-core@3.1.1": {
+    "@newrelic/video-core@4.0.0": {
       "name": "@newrelic/video-core",
-      "version": "3.1.1",
+      "version": "4.0.0",
       "range": "^4.0.0",
       "licenses": "Apache-2.0",
       "repoUrl": "https://github.com/newrelic/video-core-js",
-      "versionedRepoUrl": "https://github.com/newrelic/video-core-js/tree/v3.1.1",
+      "versionedRepoUrl": "https://github.com/newrelic/video-core-js/tree/v4.0.0",
       "licenseFile": "node_modules/@newrelic/video-core/LICENSE",
-      "licenseUrl": "https://github.com/newrelic/video-core-js/blob/v3.1.1/LICENSE",
+      "licenseUrl": "https://github.com/newrelic/video-core-js/blob/v4.0.0/LICENSE",
       "licenseTextSource": "file",
       "publisher": "Jordi Aguilar"
     }
