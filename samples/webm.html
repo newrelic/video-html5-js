@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-    <script type="text/javascript" src="agent.js"></script>
-
     <!-- new relic tracker -->
     <script src="../dist/umd/newrelic-video-html5.min.js"></script>
   </head>
@@ -16,8 +13,16 @@
       />
     </video>
     <script>
-      var myPlayer = document.getElementById("myPlayer");
-      const tracker  = new Html5Tracker(myPlayer);
+      var myPlayer = document.getElementById('myPlayer');
+
+      const options = {
+        info: {
+          beacon: 'xxxxxxx',
+          licenseKey: 'xxxxxxxx',
+          applicationID: 'xxxxxxxx',
+        },
+      };
+      const tracker = new Html5Tracker(myPlayer, options);
     </script>
   </body>
 </html>
