@@ -1,5 +1,6 @@
 import nrvideo from '@newrelic/video-core';
 import pkg from '../package.json';
+import Html5ImaAdsTracker from './ads/ima';
 
 export default class Html5Tracker extends nrvideo.VideoTracker {
   constructor(player, options) {
@@ -66,12 +67,39 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     return this.player.preload;
   }
 
+  onAdsready() {
+    if (!this.adsTracker) {
+      if(Html5ImaAdsTracker.isUsing(this.player)) {
+        this.setAdsTracker(new Html5ImaAdsTracker(this.player));
+      }
+      // no generic tracker
+    }
+  }
+
+  onAdStart() {
+    this.currentAdPlaying = true;
+
+    /* get the array with all the cue points which will be played */
+    if (!this.imaAdCuePoints) {
+      this.imaAdCuePoints = this.player?.ima?.getAdsManager().getCuePoints();
+    }
+  }
+
+  onAdEnd() {
+    if (this.isContentEnd) {
+      this.sendEnd();
+    }
+  }
+
   registerListeners() {
     nrvideo.Log.debugCommonVideoEvents(this.player);
 
     this.player.addEventListener('loadstart', this.onDownload.bind(this));
     this.player.addEventListener('loadedmetadata', this.onDownload.bind(this));
     this.player.addEventListener('loadeddata', this.onDownload.bind(this));
+    this.player.addEventListener('adsready', this.onAdsready.bind(this));
+    this.player.addEventListener('adstart', this.onAdStart.bind(this));
+    this.player.addEventListener('adend', this.onAdEnd.bind(this));
     this.player.addEventListener('canplay', this.onDownload.bind(this));
     this.player.addEventListener('play', this.onPlay.bind(this));
     this.player.addEventListener('playing', this.onPlaying.bind(this));
@@ -87,6 +115,9 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     this.player.removeEventListener('loadstart', this.onDownload);
     this.player.removeEventListener('loadedmetadata', this.onDownload);
     this.player.removeEventListener('loadeddata', this.onDownload);
+    this.player.removeEventListener('adsready', this.onAdsready.bind(this));
+    this.player.removeEventListener('adstart', this.onAdStart.bind(this));
+    this.player.removeEventListener('adend', this.onAdEnd.bind(this));
     this.player.removeEventListener('canplay', this.onDownload);
     this.player.removeEventListener('play', this.onPlay);
     this.player.removeEventListener('playing', this.onPlaying);

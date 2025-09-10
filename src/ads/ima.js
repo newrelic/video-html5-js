@@ -1,0 +1,254 @@
+import nrvideo from '@newrelic/video-core';
+import pkg from '../../package.json';
+
+export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
+
+  static isUsing(player) {
+    return player.ima && typeof self.google !== 'undefined';
+  }
+
+  getTrackerName() {
+    return 'ima-ads';
+  }
+
+  getTrackerVersion() {
+    return pkg.version;
+  }
+
+  isMuted() {
+    return this.player.muted;
+  }
+
+  getPlayerName() {
+    return 'html5-ads';
+  }
+
+  getPlayerVersion() {
+    return (
+      'ima: ' + google.ima.VERSION
+    );
+  }
+
+  getCuePoints() {
+    return this.player.ima.getAdsManager().getCuePoints();
+  }
+
+  getAdPosition() {
+    if (
+      this.lastAdData &&
+      this.lastAdData.podInfo &&
+      this.lastAdData.podInfo.podIndex !== undefined
+    ) {
+      const podIndex = this.lastAdData.podInfo.podIndex;
+
+      if (podIndex === 0) {
+        return 'pre';
+      } else if (podIndex === -1) {
+        return 'post';
+      } else {
+        return 'mid';
+      }
+    }
+    return null;
+  }
+
+  getDuration() {
+    if (this.lastAdData && this.lastAdData.duration !== undefined) {
+      return this.lastAdData.duration * 1000;
+    }
+    return null;
+  }
+
+  getVideoId() {
+    if (this.lastAdData && this.lastAdData.adId) {
+      return this.lastAdData.adId;
+    }
+    return null;
+  }
+
+  getAdCreativeId() {
+    if (this.lastAdData && this.lastAdData.creativeId) {
+      return this.lastAdData.creativeId;
+    }
+    return null;
+  }
+
+  getSrc() {
+    if (this.lastAdData && this.lastAdData.mediaUrl) {
+      return this.lastAdData.mediaUrl;
+    }
+    return null;
+  }
+
+  getTitle() {
+    if (this.lastAdData && this.lastAdData.title) {
+      return this.lastAdData.title;
+    }
+    return null;
+  }
+
+  getPlayhead() {
+    let manager = this.player.ima.getAdsManager();
+    if (manager) {
+      return (this.getDuration() - manager.getRemainingTime()) * 1000;
+    }
+  }
+
+  getPlayrate() {
+    return this.player.playbackRate;
+  }
+
+  getAdPartner() {
+    return 'ima';
+  }
+
+  registerListeners() {
+    // Shortcut events
+    let e = google.ima.AdEvent.Type;
+    let AD_ERROR = google.ima.AdErrorEvent.Type.AD_ERROR;
+
+    //store ad data
+    this.lastAdData = null;
+    // debug
+    nrvideo.Log.debugCommonVideoEvents(this.player.ima.addEventListener, [
+      null,
+      e.ALL_ADS_COMPLETED,
+      e.LINEAR_CHANGED,
+      e.COMPLETE,
+      e.USER_CLOSE,
+      e.CONTENT_PAUSE_REQUESTED,
+      e.CONTENT_RESUME_REQUESTED,
+      e.SKIPPED,
+      e.SKIPPABLE_STATE_CHANGED,
+      e.LOADED,
+      e.PAUSED,
+      e.RESUMED,
+      e.STARTED,
+      e.AD_CAN_PLAY,
+      e.AD_METADATA,
+      e.EXPANDED_CHANGED,
+      e.AD_BREAK_READY,
+      e.LOG,
+      e.CLICK,
+      e.FIRST_QUARTILE,
+      e.MIDPOINT,
+      e.THIRD_QUARTILE,
+      AD_ERROR
+    ]);
+
+    // Register listeners
+    this.player.ima.addEventListener(e.LOADED, this.onLoaded.bind(this));
+    this.player.ima.addEventListener(e.STARTED, this.onStart.bind(this));
+    this.player.ima.addEventListener(e.PAUSED, this.onPaused.bind(this));
+    this.player.ima.addEventListener(e.RESUMED, this.onResumed.bind(this));
+    this.player.ima.addEventListener(e.COMPLETE, this.onComplete.bind(this));
+    this.player.ima.addEventListener(e.SKIPPED, this.onSkipped.bind(this));
+    this.player.ima.addEventListener(e.CLICK, this.onClick.bind(this));
+    this.player.ima.addEventListener(
+      e.FIRST_QUARTILE,
+      this.onFirstQuartile.bind(this)
+    );
+    this.player.ima.addEventListener(e.MIDPOINT, this.onMidpoint.bind(this));
+    this.player.ima.addEventListener(
+      e.THIRD_QUARTILE,
+      this.onThirdQuartile.bind(this)
+    );
+    this.player.ima.addEventListener(AD_ERROR, this.onError.bind(this));
+  }
+
+  unregisterListeners() {
+    // Shortcut events
+    let e = google.ima.AdEvent.Type;
+    let AD_ERROR = google.ima.AdErrorEvent.Type.AD_ERROR;
+
+    // unregister listeners
+    this.player.ima.removeEventListener(e.LOADED, this.onLoaded.bind(this));
+    this.player.ima.removeEventListener(e.STARTED, this.onStart.bind(this));
+    this.player.ima.removeEventListener(e.PAUSED, this.onPaused);
+    this.player.ima.removeEventListener(e.RESUMED, this.onResumed);
+    this.player.ima.removeEventListener(e.COMPLETE, this.onComplete);
+    this.player.ima.removeEventListener(e.SKIPPED, this.onSkipped);
+    this.player.ima.removeEventListener(e.CLICK, this.onClick);
+    this.player.ima.removeEventListener(e.FIRST_QUARTILE, this.onFirstQuartile);
+    this.player.ima.removeEventListener(e.MIDPOINT, this.onMidpoint);
+    this.player.ima.removeEventListener(e.THIRD_QUARTILE, this.onThirdQuartile);
+    this.player.ima.removeEventListener(AD_ERROR, this.onError);
+    //clear ad data
+    this.lastAdData = null;
+  }
+
+  onLoaded(e) {
+    this.lastAdData = this.getAdData();
+    this.sendRequest();
+  }
+
+  onStart(e) {
+    this.lastAdData = this.getAdData();
+    this.sendStart();
+  }
+
+  onComplete(e) {
+    this.sendEnd();
+    this.lastAdData = null; // Clear the data
+  }
+
+  onSkipped(e) {
+    this.sendEnd({ skipped: true });
+    this.lastAdData = null; // Clear the data
+  }
+
+  onError(e) {
+    const adError = e.getError();
+
+    const errorCode = adError.getErrorCode();
+    const errorMessage = adError.getMessage();
+    this.sendError({ adError, errorCode, errorMessage });
+  }
+
+  onClick(e) {
+    this.sendAdClick();
+  }
+
+  onFirstQuartile() {
+    this.sendAdQuartile({ adQuartile: 1 });
+  }
+
+  onMidpoint() {
+    this.sendAdQuartile({ adQuartile: 2 });
+  }
+
+  onThirdQuartile() {
+    this.sendAdQuartile({ adQuartile: 3 });
+  }
+
+  onPaused() {
+    this.sendPause();
+  }
+
+  onResumed() {
+    this.sendResume();
+  }
+
+  getAdData() {
+    try {
+      const adsManager = this.player.ima.getAdsManager();
+      if (adsManager) {
+        const currentAd = adsManager.getCurrentAd();
+        if (currentAd) {
+          return {
+            adId: currentAd.getAdId(),
+            creativeId: currentAd.getCreativeId(),
+            duration: currentAd.getDuration(),
+            mediaUrl: currentAd.getMediaUrl(),
+            title: currentAd.getTitle(),
+            podInfo: currentAd.getAdPodInfo()?.data
+            // Add other properties as needed
+          };
+        }
+      }
+      return null;
+    } catch (err) {
+      return null;
+    }
+  }
+}
