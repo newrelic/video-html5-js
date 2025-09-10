@@ -136,24 +136,31 @@ export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
       AD_ERROR
     ]);
 
+    // BIND LISTENER METHODS
+    this.onLoaded = this.onLoaded.bind(this);
+    this.onStart = this.onStart.bind(this);
+    this.onPaused = this.onPaused.bind(this);
+    this.onResumed = this.onResumed.bind(this);
+    this.onComplete = this.onComplete.bind(this);
+    this.onSkipped = this.onSkipped.bind(this);
+    this.onClick = this.onClick.bind(this);
+    this.onFirstQuartile = this.onFirstQuartile.bind(this);
+    this.onMidpoint = this.onMidpoint.bind(this);
+    this.onThirdQuartile = this.onThirdQuartile.bind(this);
+    this.onError = this.onError.bind(this);
+
     // Register listeners
-    this.player.ima.addEventListener(e.LOADED, this.onLoaded.bind(this));
-    this.player.ima.addEventListener(e.STARTED, this.onStart.bind(this));
-    this.player.ima.addEventListener(e.PAUSED, this.onPaused.bind(this));
-    this.player.ima.addEventListener(e.RESUMED, this.onResumed.bind(this));
-    this.player.ima.addEventListener(e.COMPLETE, this.onComplete.bind(this));
-    this.player.ima.addEventListener(e.SKIPPED, this.onSkipped.bind(this));
-    this.player.ima.addEventListener(e.CLICK, this.onClick.bind(this));
-    this.player.ima.addEventListener(
-      e.FIRST_QUARTILE,
-      this.onFirstQuartile.bind(this)
-    );
-    this.player.ima.addEventListener(e.MIDPOINT, this.onMidpoint.bind(this));
-    this.player.ima.addEventListener(
-      e.THIRD_QUARTILE,
-      this.onThirdQuartile.bind(this)
-    );
-    this.player.ima.addEventListener(AD_ERROR, this.onError.bind(this));
+    this.player.ima.addEventListener(e.LOADED, this.onLoaded);
+    this.player.ima.addEventListener(e.STARTED, this.onStart);
+    this.player.ima.addEventListener(e.PAUSED, this.onPaused);
+    this.player.ima.addEventListener(e.RESUMED, this.onResumed);
+    this.player.ima.addEventListener(e.COMPLETE, this.onComplete);
+    this.player.ima.addEventListener(e.SKIPPED, this.onSkipped);
+    this.player.ima.addEventListener(e.CLICK, this.onClick);
+    this.player.ima.addEventListener(e.FIRST_QUARTILE, this.onFirstQuartile);
+    this.player.ima.addEventListener(e.MIDPOINT, this.onMidpoint);
+    this.player.ima.addEventListener(e.THIRD_QUARTILE, this.onThirdQuartile);
+    this.player.ima.addEventListener(AD_ERROR, this.onError);
   }
 
   unregisterListeners() {
@@ -162,8 +169,8 @@ export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
     let AD_ERROR = google.ima.AdErrorEvent.Type.AD_ERROR;
 
     // unregister listeners
-    this.player.ima.removeEventListener(e.LOADED, this.onLoaded.bind(this));
-    this.player.ima.removeEventListener(e.STARTED, this.onStart.bind(this));
+    this.player.ima.removeEventListener(e.LOADED, this.onLoaded);
+    this.player.ima.removeEventListener(e.STARTED, this.onStart);
     this.player.ima.removeEventListener(e.PAUSED, this.onPaused);
     this.player.ima.removeEventListener(e.RESUMED, this.onResumed);
     this.player.ima.removeEventListener(e.COMPLETE, this.onComplete);
