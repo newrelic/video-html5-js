@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ### Update
 
+## [4.1.0] - 2025-09-25
+
+- **IMA Ad Tracking Support:** Added support for the IMA Ad to enhance ad tracking capabilities.
+
 ## [4.0.0] - 2025-07-28
 
 ### Changed
