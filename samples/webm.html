@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-    <script type="text/javascript" src="agent.js"></script>
+<head>
+  <!-- new relic tracker -->
+  <script src="../dist/umd/newrelic-video-html5.min.js"></script>
+</head>
 
-    <!-- new relic tracker -->
-    <script src="../dist/umd/newrelic-video-html5.min.js"></script>
-  </head>
-
-  <body>
-    <video id="myPlayer" controls height="315" width="560">
-      <source
-        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        type="video/mp4"
-      />
-    </video>
-    <script>
-      var myPlayer = document.getElementById("myPlayer");
-      const tracker  = new Html5Tracker(myPlayer);
-    </script>
-  </body>
+<body>
+<video id="myPlayer" controls height="315" width="560">
+  <source
+    src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    type="video/mp4"
+  />
+</video>
+<!--  New Relic Video agent initialization  -->
+<script src="index.js"></script>
+</body>
 </html>
