@@ -1,4 +1,21 @@
 {
-  "presets": ["@babel/preset-env"],
-  "plugins": ["@babel/plugin-transform-modules-commonjs"]
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": "79",
+          "node": "8"
+        },
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-transform-modules-commonjs",
+    // EXPLICITLY ADD THE MISSING PLUGINS
+    "@babel/plugin-transform-optional-chaining",
+    "@babel/plugin-transform-nullish-coalescing-operator"
+  ]
 }

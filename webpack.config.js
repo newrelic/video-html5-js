@@ -1,6 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-var TerserPlugin = require('terser-webpack-plugin');
 
 var pkg = require('./package.json');
 var license =
@@ -34,7 +33,24 @@ module.exports = [
           use: {
             loader: 'babel-loader',
             options: {
-              presets: [['@babel/preset-env']],
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      chrome: '79',
+                      node: '8',
+                    },
+                    useBuiltIns: 'usage',
+                    corejs: 3,
+                  },
+                ],
+              ],
+              plugins: [
+                '@babel/plugin-transform-modules-commonjs',
+                '@babel/plugin-transform-optional-chaining',
+                '@babel/plugin-transform-nullish-coalescing-operator',
+              ],
             },
           },
         },
@@ -65,7 +81,24 @@ module.exports = [
           use: {
             loader: 'babel-loader',
             options: {
-              presets: [['@babel/preset-env', { targets: 'defaults' }]],
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      chrome: '79',
+                      node: '8',
+                    },
+                    useBuiltIns: 'usage',
+                    corejs: 3,
+                  },
+                ],
+              ],
+              plugins: [
+                '@babel/plugin-transform-modules-commonjs',
+                '@babel/plugin-transform-optional-chaining',
+                '@babel/plugin-transform-nullish-coalescing-operator',
+              ],
             },
           },
         },
@@ -73,7 +106,6 @@ module.exports = [
     },
     optimization: {
       minimize: true,
-      minimizer: [new TerserPlugin()],
     },
     plugins: [
       new webpack.BannerPlugin({
@@ -105,7 +137,22 @@ module.exports = [
             loader: 'babel-loader',
             options: {
               presets: [
-                ['@babel/preset-env', { targets: 'defaults', modules: false }],
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      chrome: '79',
+                      node: '8',
+                    },
+                    useBuiltIns: 'usage',
+                    corejs: 3,
+                    modules: false,
+                  },
+                ],
+              ],
+              plugins: [
+                '@babel/plugin-transform-optional-chaining',
+                '@babel/plugin-transform-nullish-coalescing-operator',
               ],
             },
           },
@@ -114,7 +161,6 @@ module.exports = [
     },
     optimization: {
       minimize: true,
-      minimizer: [new TerserPlugin()],
     },
     plugins: [
       new webpack.BannerPlugin({
