@@ -165,16 +165,36 @@ describe('Html5ImaAdsTracker', () => {
       expect(tracker.getAdCreativeId()).toBe('creative-xyz');
     });
 
+    it('should return null for creative ID when property is missing', () => {
+      tracker.lastAdData = { adId: 'test-ad' };
+      expect(tracker.getAdCreativeId()).toBeNull();
+    });
+
     it('should return ad duration in milliseconds', () => {
       expect(tracker.getDuration()).toBe(45000);
+    });
+
+    it('should return null for duration when property is missing', () => {
+      tracker.lastAdData = { adId: 'test-ad' };
+      expect(tracker.getDuration()).toBeNull();
     });
 
     it('should return ad source URL', () => {
       expect(tracker.getSrc()).toBe('https://example.com/test-ad.mp4');
     });
 
+    it('should return null for source URL when property is missing', () => {
+      tracker.lastAdData = { adId: 'test-ad' };
+      expect(tracker.getSrc()).toBeNull();
+    });
+
     it('should return ad title', () => {
       expect(tracker.getTitle()).toBe('Test Ad Title');
+    });
+
+    it('should return null for title when property is missing', () => {
+      tracker.lastAdData = { adId: 'test-ad' };
+      expect(tracker.getTitle()).toBeNull();
     });
   });
 
@@ -382,6 +402,48 @@ describe('Html5ImaAdsTracker', () => {
 
       expect(adData.adId).toBe('extracted-ad-id');
       expect(adData.title).toBe('Extracted Title');
+    });
+
+    it('should extract podInfo from ad pod info data', () => {
+      const mockPodInfo = {
+        podIndex: 2,
+        totalAds: 3,
+        adPosition: 2
+      };
+      const mockAd = createMockAd({
+        podInfo: mockPodInfo
+      });
+      adsManager.getCurrentAd.mockReturnValue(mockAd);
+
+      tracker.getAdData = Html5ImaAdsTracker.prototype.getAdData;
+      const adData = tracker.getAdData();
+
+      expect(adData.podInfo).toEqual(mockPodInfo);
+      expect(adData.podInfo.podIndex).toBe(2);
+      expect(adData.podInfo.totalAds).toBe(3);
+      expect(adData.podInfo.adPosition).toBe(2);
+    });
+
+    it('should handle null podInfo when getAdPodInfo returns null', () => {
+      const mockAd = createMockAd();
+      mockAd.getAdPodInfo.mockReturnValue(null);
+      adsManager.getCurrentAd.mockReturnValue(mockAd);
+
+      tracker.getAdData = Html5ImaAdsTracker.prototype.getAdData;
+      const adData = tracker.getAdData();
+
+      expect(adData.podInfo).toBeUndefined();
+    });
+
+    it('should handle missing data property in adPodInfo', () => {
+      const mockAd = createMockAd();
+      mockAd.getAdPodInfo.mockReturnValue({});
+      adsManager.getCurrentAd.mockReturnValue(mockAd);
+
+      tracker.getAdData = Html5ImaAdsTracker.prototype.getAdData;
+      const adData = tracker.getAdData();
+
+      expect(adData.podInfo).toBeUndefined();
     });
 
     it('should return null when ads manager is not available', () => {
