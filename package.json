@@ -23,7 +23,7 @@
   "author": "Jordi Aguilar",
   "license": "Apache-2.0",
   "dependencies": {
-    "@newrelic/video-core": "^4.0.0"
+    "@newrelic/video-core": "^4.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
