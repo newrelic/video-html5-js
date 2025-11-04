@@ -242,13 +242,14 @@ export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
       if (adsManager) {
         const currentAd = adsManager.getCurrentAd();
         if (currentAd) {
+          const adPodInfo = currentAd.getAdPodInfo();
           return {
             adId: currentAd.getAdId(),
             creativeId: currentAd.getCreativeId(),
             duration: currentAd.getDuration(),
             mediaUrl: currentAd.getMediaUrl(),
             title: currentAd.getTitle(),
-            podInfo: currentAd.getAdPodInfo()?.data
+            podInfo: adPodInfo ? adPodInfo.data : undefined,
             // Add other properties as needed
           };
         }
