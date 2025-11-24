@@ -6,6 +6,15 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
   constructor(player, options) {
     super(player, options);
 
+    // Listen to all events to verify they're being emitted
+    this.on('*', function (event) {
+      console.log(
+        '[HTML5 Tracker] 📤 Event emitted:',
+        event.type,
+        event.eventType
+      );
+    });
+
     nrvideo.Core.addTracker(this, options);
   }
   getTrackerName() {
@@ -70,7 +79,7 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
 
   onAdsready() {
     if (!this.adsTracker) {
-      if(Html5ImaAdsTracker.isUsing(this.player)) {
+      if (Html5ImaAdsTracker.isUsing(this.player)) {
         this.setAdsTracker(new Html5ImaAdsTracker(this.player));
       }
       // no generic tracker
@@ -82,7 +91,10 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
 
     /* get the array with all the cue points which will be played */
     if (!this.imaAdCuePoints) {
-      this.imaAdCuePoints = this.player?.ima?.getAdsManager().getCuePoints();
+      this.imaAdCuePoints =
+        this.player &&
+        this.player.ima &&
+        this.player.ima.getAdsManager().getCuePoints();
     }
   }
 
@@ -193,3 +205,12 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     }
   }
 }
+
+/**
+ * 
+ * NREUM.loader_config={accountID:"12748547",trustKey:"190",agentID:"274145795",licenseKey:"NRBR-53d64fae3042586d192",applicationID:"274145795"};
+;NREUM.info={beacon:"staging-bam-cell.nr-data.net",errorBeacon:"staging-bam-cell.nr-data.net",licenseKey:"NRBR-53d64fae3042586d192",applicationID:"274145795",sa:1};
+ * 
+ * 
+ * 
+ */

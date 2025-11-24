@@ -4,7 +4,7 @@
       "@babel/preset-env",
       {
         "targets": {
-          "chrome": "79",
+          "chrome": "53",
           "node": "8"
         },
         "useBuiltIns": "usage",
@@ -16,6 +16,13 @@
     "@babel/plugin-transform-modules-commonjs",
     // EXPLICITLY ADD THE MISSING PLUGINS
     "@babel/plugin-transform-optional-chaining",
-    "@babel/plugin-transform-nullish-coalescing-operator"
+    "@babel/plugin-transform-nullish-coalescing-operator",
+    "@babel/plugin-transform-object-rest-spread",
+    "@babel/plugin-transform-class-properties",
+    "@babel/plugin-transform-async-to-generator",
+    "@babel/plugin-transform-for-of",
+    "@babel/plugin-transform-parameters",
+    "@babel/plugin-transform-destructuring",
+    "@babel/plugin-transform-object-super"
   ]
 }

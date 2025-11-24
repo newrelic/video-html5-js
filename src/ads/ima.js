@@ -2,7 +2,6 @@ import nrvideo from '@newrelic/video-core';
 import pkg from '../../package.json';
 
 export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
-
   static isUsing(player) {
     return player.ima && typeof self.google !== 'undefined';
   }
@@ -24,9 +23,7 @@ export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
   }
 
   getPlayerVersion() {
-    return (
-      'ima: ' + google.ima.VERSION
-    );
+    return 'ima: ' + google.ima.VERSION;
   }
 
   getCuePoints() {
@@ -133,7 +130,7 @@ export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
       e.FIRST_QUARTILE,
       e.MIDPOINT,
       e.THIRD_QUARTILE,
-      AD_ERROR
+      AD_ERROR,
     ]);
 
     // BIND LISTENER METHODS
@@ -248,7 +245,7 @@ export default class Html5ImaAdsTracker extends nrvideo.VideoTracker {
             duration: currentAd.getDuration(),
             mediaUrl: currentAd.getMediaUrl(),
             title: currentAd.getTitle(),
-            podInfo: currentAd.getAdPodInfo()?.data
+            podInfo: currentAd.getAdPodInfo() && currentAd.getAdPodInfo().data,
             // Add other properties as needed
           };
         }

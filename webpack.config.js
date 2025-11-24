@@ -25,20 +25,26 @@ module.exports = [
       libraryExport: 'default',
     },
     devtool: 'source-map',
+    resolve: {
+      alias: {
+        '@newrelic/video-core': require.resolve('@newrelic/video-core/src/index.js')
+      }
+    },
     module: {
       rules: [
         {
           test: /\.(?:js|mjs|cjs)$/,
-          exclude: /node_modules/,
+          exclude: /node_modules\/(?!@newrelic\/video-core\/src)/,
           use: {
             loader: 'babel-loader',
             options: {
+              sourceType: 'unambiguous',
               presets: [
                 [
                   '@babel/preset-env',
                   {
                     targets: {
-                      chrome: '79',
+                      chrome: '53',
                       node: '8',
                     },
                     useBuiltIns: 'usage',
@@ -47,9 +53,15 @@ module.exports = [
                 ],
               ],
               plugins: [
-                '@babel/plugin-transform-modules-commonjs',
                 '@babel/plugin-transform-optional-chaining',
                 '@babel/plugin-transform-nullish-coalescing-operator',
+                '@babel/plugin-transform-object-rest-spread',
+                '@babel/plugin-transform-class-properties',
+                '@babel/plugin-transform-async-to-generator',
+                '@babel/plugin-transform-for-of',
+                '@babel/plugin-transform-parameters',
+                '@babel/plugin-transform-destructuring',
+                '@babel/plugin-transform-object-super',
               ],
             },
           },
@@ -73,20 +85,26 @@ module.exports = [
       libraryTarget: 'commonjs2', // CommonJS format
     },
     devtool: 'source-map',
+    resolve: {
+      alias: {
+        '@newrelic/video-core': require.resolve('@newrelic/video-core/src/index.js')
+      }
+    },
     module: {
       rules: [
         {
           test: /\.(js|mjs|cjs)$/,
-          exclude: /node_modules/,
+          exclude: /node_modules\/(?!@newrelic\/video-core\/src)/,
           use: {
             loader: 'babel-loader',
             options: {
+              sourceType: 'unambiguous',
               presets: [
                 [
                   '@babel/preset-env',
                   {
                     targets: {
-                      chrome: '79',
+                      chrome: '53',
                       node: '8',
                     },
                     useBuiltIns: 'usage',
@@ -95,9 +113,15 @@ module.exports = [
                 ],
               ],
               plugins: [
-                '@babel/plugin-transform-modules-commonjs',
                 '@babel/plugin-transform-optional-chaining',
                 '@babel/plugin-transform-nullish-coalescing-operator',
+                '@babel/plugin-transform-object-rest-spread',
+                '@babel/plugin-transform-class-properties',
+                '@babel/plugin-transform-async-to-generator',
+                '@babel/plugin-transform-for-of',
+                '@babel/plugin-transform-parameters',
+                '@babel/plugin-transform-destructuring',
+                '@babel/plugin-transform-object-super',
               ],
             },
           },
@@ -128,11 +152,16 @@ module.exports = [
       outputModule: true, // Enable ES Module output
     },
     devtool: 'source-map',
+    resolve: {
+      alias: {
+        '@newrelic/video-core': require.resolve('@newrelic/video-core/src/index.js')
+      }
+    },
     module: {
       rules: [
         {
           test: /\.(js|mjs|cjs)$/,
-          exclude: /node_modules/,
+          exclude: /node_modules\/(?!@newrelic\/video-core\/src)/,
           use: {
             loader: 'babel-loader',
             options: {
@@ -141,7 +170,7 @@ module.exports = [
                   '@babel/preset-env',
                   {
                     targets: {
-                      chrome: '79',
+                      chrome: '53',
                       node: '8',
                     },
                     useBuiltIns: 'usage',
@@ -153,6 +182,13 @@ module.exports = [
               plugins: [
                 '@babel/plugin-transform-optional-chaining',
                 '@babel/plugin-transform-nullish-coalescing-operator',
+                '@babel/plugin-transform-object-rest-spread',
+                '@babel/plugin-transform-class-properties',
+                '@babel/plugin-transform-async-to-generator',
+                '@babel/plugin-transform-for-of',
+                '@babel/plugin-transform-parameters',
+                '@babel/plugin-transform-destructuring',
+                '@babel/plugin-transform-object-super',
               ],
             },
           },

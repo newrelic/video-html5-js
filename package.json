@@ -24,12 +24,21 @@
   "dependencies": {
     "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
     "@babel/plugin-transform-optional-chaining": "^7.24.8",
-    "@newrelic/video-core": "4.0.1",
+    "@newrelic/video-core": "^4.0.2",
+    "abortcontroller-polyfill": "^1.7.8",
     "core-js": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-transform-async-to-generator": "^7.27.1",
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-transform-destructuring": "^7.28.5",
+    "@babel/plugin-transform-for-of": "^7.27.1",
     "@babel/plugin-transform-modules-commonjs": "^7.24.1",
+    "@babel/plugin-transform-object-rest-spread": "^7.28.4",
+    "@babel/plugin-transform-object-super": "^7.27.1",
+    "@babel/plugin-transform-parameters": "^7.27.7",
     "@babel/preset-env": "^7.24.5",
     "@newrelic/newrelic-oss-cli": "^0.1.2",
     "aws-sdk": "^2.920.0",
