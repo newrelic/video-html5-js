@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ### Update
 
+## [4.1.1] - 2026-04-17
+
+### Documentation
+
+- **README Overhaul:** Restructured and expanded README with comprehensive installation guides, usage examples, best practices, configuration options, API reference, and support channels.
+
 ## [4.1.0] - 2025-09-25
 
 - **IMA Ad Tracking Support:** Added support for the IMA Ad to enhance ad tracking capabilities.
