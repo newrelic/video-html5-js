@@ -314,6 +314,8 @@ customData: {
 
 > **Limit:** The maximum total number of custom attributes per event is **150**. Any attributes beyond this limit will be dropped.
 
+> **Note:** There are special keywords reserved for default attributes (documented in [DATAMODEL.md](./DATAMODEL.md)). Please do not use these as custom attribute names, as they will be dropped.
+
 ## API Reference
 
 ### Core Methods
