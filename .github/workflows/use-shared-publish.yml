@@ -5,7 +5,7 @@ on:
     types:
     - closed
     branches:
-    - stable
+    - master
 
 jobs:
   build-and-publish:
