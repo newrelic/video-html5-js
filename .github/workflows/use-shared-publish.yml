@@ -1,16 +1,10 @@
 name: Build and Publish
 
 on:
-  pull_request:
-    types:
-    - closed
-    branches:
-    - master
   workflow_dispatch:
 
 jobs:
   build-and-publish:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     uses: newrelic/video-core-js/.github/workflows/npm-publish.yml@stable
     with:
       s3-path: 'media-agents/browser/html5'
