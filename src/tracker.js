@@ -108,6 +108,7 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     this.onError = this.onError.bind(this);
     this.onEnded = this.onEnded.bind(this);
     this.onWaiting = this.onWaiting.bind(this);
+    this.onProgress = this.onProgress.bind(this);
 
     this.player.addEventListener('loadstart', this.onDownload);
     this.player.addEventListener('loadedmetadata', this.onDownload);
@@ -124,6 +125,7 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     this.player.addEventListener('error', this.onError);
     this.player.addEventListener('ended', this.onEnded);
     this.player.addEventListener('waiting', this.onWaiting);
+    this.player.addEventListener('progress', this.onProgress);
   }
 
   unregisterListeners() {
@@ -142,6 +144,7 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
     this.player.removeEventListener('error', this.onError);
     this.player.removeEventListener('ended', this.onEnded);
     this.player.removeEventListener('waiting', this.onWaiting);
+    this.player.removeEventListener('progress', this.onProgress);
   }
 
   onDownload(e) {
@@ -190,6 +193,17 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
       this.player.readyState < this.player.HAVE_FUTURE_DATA
     ) {
       this.sendBufferStart();
+    }
+  }
+
+  onProgress() {
+    // Detect buffer recovery while paused
+    // When paused and readyState indicates enough data is buffered,
+    // fire BUFFER_END immediately rather than waiting for resume
+    if (!this.player.paused) return;
+
+    if (this.player.readyState >= this.player.HAVE_FUTURE_DATA) {
+      this.sendBufferEnd();
     }
   }
 }
