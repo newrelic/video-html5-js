@@ -21,6 +21,7 @@
     var hls = null;
     var tracker = null;
     var gamedayLevels = null;
+    var pendingTC1LowPin = false;
     var timers = [];
 
     function log(msg) {
@@ -40,6 +41,7 @@
         hls = null;
       }
       gamedayLevels = null;
+      pendingTC1LowPin = false;
       var options = {
         info: {
           licenseKey: "GAMEDAY-TEST-LICENSE-KEY",
@@ -59,6 +61,11 @@
           top: hls.levels.indexOf(sorted[sorted.length - 1])
         };
         log("GAMEDAY levels resolved: " + JSON.stringify(gamedayLevels));
+        if (pendingTC1LowPin) {
+          pendingTC1LowPin = false;
+          hls.currentLevel = gamedayLevels.low;
+          log("GAMEDAY TC1 Low tier pinned at manifest-parse time");
+        }
       });
       hls.loadSource(GAMEDAY_ASSET_URL);
       hls.attachMedia(player);
@@ -74,9 +81,7 @@
     document.getElementById("btn-tc1").onclick = function () {
       log("GAMEDAY TC1 started");
       startSession();
-      timers.push(setTimeout(function () {
-        if (gamedayLevels) { hls.currentLevel = gamedayLevels.low; }
-      }, 500));
+      pendingTC1LowPin = true;
       timers.push(setTimeout(function () {
         hls.currentLevel = gamedayLevels.mid;
         log("GAMEDAY TC1 switch-up #1");
@@ -100,14 +105,14 @@
       log("GAMEDAY TC2 started");
       startSession();
       timers.push(setTimeout(function () {
-        log("GAMEDAY TC2 triggering broken URL");
-        player.src = "https://commondatastorage.googleapis.com/does-not-exist/broken-" + Date.now() + ".mp4";
-      }, 3000));
-      timers.push(setTimeout(function () {
         if (player.duration && player.duration > 3) {
           log("GAMEDAY TC2 seeking near end");
           player.currentTime = player.duration - 3;
         }
+      }, 3000));
+      timers.push(setTimeout(function () {
+        log("GAMEDAY TC2 triggering broken URL");
+        player.src = "https://commondatastorage.googleapis.com/does-not-exist/broken-" + Date.now() + ".mp4";
       }, 6000));
       timers.push(setTimeout(function () {
         log("GAMEDAY TC2 firing one custom event");
