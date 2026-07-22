@@ -89,16 +89,16 @@
       timers.push(setTimeout(function () {
         hls.currentLevel = gamedayLevels.top;
         log("GAMEDAY TC1 switch-up #2");
-      }, 23000));
+      }, 27000));
       timers.push(setTimeout(function () {
         hls.currentLevel = gamedayLevels.mid;
         log("GAMEDAY TC1 switch-down #1");
-      }, 26000));
+      }, 34000));
       timers.push(setTimeout(function () {
         log("GAMEDAY TC1 pausing for 10s");
         player.pause();
         timers.push(setTimeout(function () { player.play(); }, 10000));
-      }, 29000));
+      }, 41000));
     };
 
     document.getElementById("btn-tc2").onclick = function () {
