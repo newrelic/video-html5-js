@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QOE 1.1 Game Day — Deterministic Test Cases</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+  <script src="../dist/umd/newrelic-video-html5.min.js"></script>
+</head>
+<body>
+  <video id="player" controls width="640" height="360" muted></video>
+  <div>
+    <button id="btn-tc0">Run TC0: Baseline</button>
+    <button id="btn-tc1">Run TC1: Happy Path</button>
+    <button id="btn-tc2">Run TC2: Stress/Error</button>
+  </div>
+  <pre id="log"></pre>
+
+  <script>
+    var GAMEDAY_ASSET_URL = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_adv_example_hevc/master.m3u8";
+    var player = document.getElementById("player");
+    var logEl = document.getElementById("log");
+    var hls = null;
+    var tracker = null;
+    var gamedayLevels = null;
+    var timers = [];
+
+    function log(msg) {
+      logEl.textContent += msg + "\n";
+      console.log(msg);
+    }
+
+    function clearTimers() {
+      timers.forEach(function (t) { clearTimeout(t); });
+      timers = [];
+    }
+
+    function startSession() {
+      clearTimers();
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
+      gamedayLevels = null;
+      var options = {
+        info: {
+          licenseKey: "GAMEDAY-TEST-LICENSE-KEY",
+          beacon: "localhost.invalid",
+          applicationID: "gameday-test-app"
+        },
+        config: { qoeAggregate: true, qoeIntervalFactor: 1 }
+      };
+      tracker = new Html5Tracker(player, options);
+
+      hls = new Hls();
+      hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+        var sorted = data.levels.slice().sort(function (a, b) { return a.bitrate - b.bitrate; });
+        gamedayLevels = {
+          low: hls.levels.indexOf(sorted[0]),
+          mid: hls.levels.indexOf(sorted[Math.floor(sorted.length / 2)]),
+          top: hls.levels.indexOf(sorted[sorted.length - 1])
+        };
+        log("GAMEDAY levels resolved: " + JSON.stringify(gamedayLevels));
+      });
+      hls.loadSource(GAMEDAY_ASSET_URL);
+      hls.attachMedia(player);
+      player.muted = true;
+      player.play().catch(function (e) { log("play() error (may be expected pre-manifest): " + e.message); });
+    }
+
+    document.getElementById("btn-tc0").onclick = function () {
+      log("GAMEDAY TC0 started");
+      startSession();
+    };
+
+    document.getElementById("btn-tc1").onclick = function () {
+      log("GAMEDAY TC1 started");
+      startSession();
+      timers.push(setTimeout(function () {
+        if (gamedayLevels) { hls.currentLevel = gamedayLevels.low; }
+      }, 500));
+      timers.push(setTimeout(function () {
+        hls.currentLevel = gamedayLevels.mid;
+        log("GAMEDAY TC1 switch-up #1");
+      }, 20000));
+      timers.push(setTimeout(function () {
+        hls.currentLevel = gamedayLevels.top;
+        log("GAMEDAY TC1 switch-up #2");
+      }, 23000));
+      timers.push(setTimeout(function () {
+        hls.currentLevel = gamedayLevels.mid;
+        log("GAMEDAY TC1 switch-down #1");
+      }, 26000));
+      timers.push(setTimeout(function () {
+        log("GAMEDAY TC1 pausing for 10s");
+        player.pause();
+        timers.push(setTimeout(function () { player.play(); }, 10000));
+      }, 29000));
+    };
+
+    document.getElementById("btn-tc2").onclick = function () {
+      log("GAMEDAY TC2 started");
+      startSession();
+      timers.push(setTimeout(function () {
+        log("GAMEDAY TC2 triggering broken URL");
+        player.src = "https://commondatastorage.googleapis.com/does-not-exist/broken-" + Date.now() + ".mp4";
+      }, 3000));
+      timers.push(setTimeout(function () {
+        if (player.duration && player.duration > 3) {
+          log("GAMEDAY TC2 seeking near end");
+          player.currentTime = player.duration - 3;
+        }
+      }, 6000));
+      timers.push(setTimeout(function () {
+        log("GAMEDAY TC2 firing one custom event");
+        tracker.sendCustom("GAMEDAY_TC2_CUSTOM_EVENT", "playing", {});
+      }, 9000));
+    };
+  </script>
+</body>
+</html>
