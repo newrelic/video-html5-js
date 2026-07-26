@@ -118,7 +118,6 @@ const tracker = new Html5Tracker(player, {
     applicationID: 'YOUR_APP_ID',
   },
   config: {
-    qoeAggregate:      true,
     qoeIntervalFactor: 2,
   },
   customData: {
@@ -176,7 +175,7 @@ const onSurfaceViewCreated = (surfaceHandle) => {
       endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
       deviceInfo,                             // optional but recommended
     },
-    config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+    config: { qoeIntervalFactor: 1 },
     customData: { contentTitle: 'Vega Stream' },
   });
   tracker.current.setUserId('YOUR_USER_ID');
@@ -215,7 +214,6 @@ const options = {
     applicationID: 'YOUR_APP_ID',
   },
   config: {
-    qoeAggregate:      true,
     qoeIntervalFactor: 2,
   },
   customData: {
@@ -362,7 +360,6 @@ if (shouldEnableTracking(currentUser.id)) {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `qoeAggregate` | boolean | `true` | Enable Quality of Experience event aggregation. Collects QoE metrics like startup time, buffering, and playback quality. |
 | `qoeIntervalFactor` | number | `2` | Controls QoE event frequency. A value of `N` sends QoE events once every N harvest cycles. Must be a positive integer. QoE events are always included on first and final harvest cycles. |
 
 ### Custom Data
@@ -439,9 +436,6 @@ const tracker = new Html5Tracker(player, {
     licenseKey:    'YOUR_LICENSE_KEY',
     beacon:        'YOUR_BEACON_URL',
     applicationID: 'YOUR_APP_ID',
-  },
-  config: {
-    qoeAggregate: true,
   },
 });
 
