@@ -64,10 +64,8 @@ For quick integration without a build system, include the tracker directly in yo
     </video>
 
     <script>
-      // Get a reference to the video element
       var player = document.getElementById('myVideo');
 
-      // Configure New Relic tracker with info from one.newrelic.com
       const options = {
         info: {
           licenseKey: 'YOUR_LICENSE_KEY',
@@ -76,7 +74,6 @@ For quick integration without a build system, include the tracker directly in yo
         }
       };
 
-      // Initialize tracker
       const tracker = new Html5Tracker(player, options);
     </script>
   </body>
@@ -97,53 +94,135 @@ Before using the tracker, ensure you have:
 
 ## Usage
 
-### Getting Your Configuration
+### Browser Player Setup
 
-Before initializing the tracker, obtain your New Relic configuration:
+**Obtain your credentials:**
 
 1. Log in to [one.newrelic.com](https://one.newrelic.com)
 2. Navigate to the video agent onboarding flow
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationID`
 
-### Basic Setup
+Import from the `/browser` subpath — this build includes only the browser agent pipeline and excludes all connected-device (Vega) code, keeping the bundle lean.
 
 ```javascript
-import Html5Tracker from '@newrelic/video-html5';
+import Html5Tracker from '@newrelic/video-html5/browser';
 
 // Get a reference to the video element
 const player = document.getElementById('myVideo');
 
-// Configure tracker with credentials from one.newrelic.com
-const options = {
+// Initialize tracker immediately — no async setup needed for HTML5.
+const tracker = new Html5Tracker(player, {
   info: {
-    licenseKey: 'YOUR_LICENSE_KEY',
-    beacon: 'YOUR_BEACON_URL',
-    applicationID: 'YOUR_APP_ID'
-  }
+    licenseKey:    'YOUR_LICENSE_KEY',
+    beacon:        'YOUR_BEACON_URL',
+    applicationID: 'YOUR_APP_ID',
+  },
+  config: {
+    qoeAggregate:      true,
+    qoeIntervalFactor: 2,
+  },
+  customData: {
+    contentTitle: 'My Video Title',
+  },
+});
+
+tracker.setUserId('YOUR_USER_ID');
+```
+
+### Vega Setup (Fire TV)
+
+For deployments targeting Amazon Vega or Fire TV (Kepler runtime), import from the `/vega` subpath and use `VegaTracker`. The `info` object uses `applicationToken` and `endpoint` specific to the Vega pipeline, plus an optional `deviceInfo` block carrying runtime device identity.
+
+**Obtain your application token:**
+
+1. Log in to [one.newrelic.com](https://one.newrelic.com)
+2. Navigate to the video agent onboarding flow
+3. Copy your `applicationToken` (begins with `AA...` and ends with `-NRMA`) and your `accountId`
+
+The HTML5 tracker works directly with the Vega `VideoPlayer` (W3C `HTMLMediaElement`) — no player SDK needed. Initialise inside `onSurfaceViewCreated` so the tracker is created after the surface is ready, and store it in a `useRef` so it can be disposed on cleanup.
+
+```javascript
+import { VegaTracker } from '@newrelic/video-html5/vega';
+import {
+  getDeviceId, getSystemVersion, getModel, getBrand,
+  getBuildIdSync, getBuildNumber,
+} from '@amazon-devices/react-native-device-info';
+
+const deviceInfo = {
+  uuid:               getDeviceId(),
+  osVersion:          getSystemVersion(),
+  deviceModel:        getModel(),
+  deviceManufacturer: getBrand(),
+  osBuild:            getBuildIdSync(),    // OS image build
+  appBuild:           getBuildNumber(),    // app build number
+  architecture:       'aarch64',
 };
 
-// Initialize tracker
-const tracker = new Html5Tracker(player, options);
+// Hold the tracker in a ref so it can be disposed on cleanup and accessed
+// for later API calls (setUserId, setHarvestInterval, etc.).
+const tracker = useRef(null);
+
+// Initialize VegaTracker inside onSurfaceViewCreated.
+// Html5Tracker attaches directly to the VideoPlayer (W3C element) — no
+// player-specific instance or explicit tag needed.
+const onSurfaceViewCreated = (surfaceHandle) => {
+  videoPlayer.setSurfaceHandle(surfaceHandle);
+  videoPlayer.play();
+
+  tracker.current = new VegaTracker(videoPlayer.current, {
+    info: {
+      accountId:        'YOUR_ACCOUNT_ID',
+      applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
+      endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
+      deviceInfo,                             // optional but recommended
+    },
+    config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+    customData: { contentTitle: 'Vega Stream' },
+  });
+  tracker.current.setUserId('YOUR_USER_ID');
+};
+
+// Dispose the tracker when content ends to release event listeners.
+const onEnded = () => {
+  tracker.current?.dispose();
+  tracker.current = null;
+};
 ```
+
+#### `info.deviceInfo` field reference
+
+All sub-fields optional — missing values fall back to the defaults baked into the SDK. Extra fields are ignored.
+
+| Field | Recommended source | Falls back to |
+| --- | --- | --- |
+| `uuid` | `getDeviceId()` — stable model-code identifier | `"00000000-0000-0000-0000-000000000000"` |
+| `osVersion` | `getSystemVersion()` | `"1.0"` |
+| `deviceModel` | `getModel()` | `"VegaDevice"` |
+| `deviceManufacturer` | `getBrand()` | `"Amazon"` |
+| `osBuild` | `getBuildIdSync()` — **OS image build** | `"1"` |
+| `appBuild` | `getBuildNumber()` — **app build number** | `"1"` |
+| `architecture` | `'aarch64'` | `"aarch64"` |
+
+`osBuild` and `appBuild` are semantically distinct: `osBuild` describes the OS image (set by Amazon when shipping the device); `appBuild` is your app's build number from app metadata. Use `getBuildIdSync()` for the former and `getBuildNumber()` for the latter — not interchangeable.
 
 ### Advanced Configuration
 
 ```javascript
 const options = {
   info: {
-    licenseKey: 'YOUR_LICENSE_KEY',
-    beacon: 'YOUR_BEACON_URL',
-    applicationID: 'YOUR_APP_ID'
+    licenseKey:    'YOUR_LICENSE_KEY',
+    beacon:        'YOUR_BEACON_URL',
+    applicationID: 'YOUR_APP_ID',
   },
   config: {
-    qoeAggregate: true,        // Enable QoE event aggregation
-    qoeIntervalFactor: 2       // Send QoE events every 2 harvest cycles
+    qoeAggregate:      true,
+    qoeIntervalFactor: 2,
   },
   customData: {
-    contentTitle: 'My Video Title',
+    contentTitle:     'My Video Title',
     customPlayerName: 'MyCustomPlayer',
-    customAttribute: 'customValue'
-  }
+    customAttribute:  'customValue',
+  },
 };
 
 const tracker = new Html5Tracker(player, options);
@@ -153,18 +232,18 @@ const tracker = new Html5Tracker(player, options);
 
 ### 1. Setting `contentTitle`
 
-The `contentTitle` attribute will display a value if your video metadata contains title information. If the metadata does not include a title, `contentTitle` will not be populated. For best results, ensure you explicitly set this attribute during initialization:
+The `contentTitle` attribute will display a value if your video metadata contains title information. For best results, ensure you explicitly set this attribute during initialization:
 
 ```javascript
 const tracker = new Html5Tracker(player, {
   info: {
-    licenseKey: 'YOUR_LICENSE_KEY',
-    beacon: 'YOUR_BEACON_URL',
-    applicationID: 'YOUR_APP_ID'
+    licenseKey:    'YOUR_LICENSE_KEY',
+    beacon:        'YOUR_BEACON_URL',
+    applicationID: 'YOUR_APP_ID',
   },
   customData: {
-    contentTitle: 'My Video Title'  // Explicitly set from your metadata
-  }
+    contentTitle: 'My Video Title',  // Explicitly set from your metadata
+  },
 });
 ```
 
@@ -173,8 +252,8 @@ If your title changes dynamically (e.g., playlist or queue):
 ```javascript
 tracker.sendOptions({
   customData: {
-    contentTitle: 'New Video Title'
-  }
+    contentTitle: 'New Video Title',
+  },
 });
 ```
 
@@ -186,14 +265,14 @@ Set a user identifier to track video analytics per user:
 // Set userId during initialization
 const tracker = new Html5Tracker(player, {
   info: {
-    licenseKey: 'YOUR_LICENSE_KEY',
-    beacon: 'YOUR_BEACON_URL',
-    applicationID: 'YOUR_APP_ID'
+    licenseKey:    'YOUR_LICENSE_KEY',
+    beacon:        'YOUR_BEACON_URL',
+    applicationID: 'YOUR_APP_ID',
   },
   customData: {
     contentTitle: 'Video Title',
-    userId: 'user-12345'
-  }
+    userId:       'user-12345',
+  },
 });
 
 // Or set userId separately using the API method
@@ -207,24 +286,21 @@ Add custom attributes unique to your deployment to improve data aggregation and 
 ```javascript
 const tracker = new Html5Tracker(player, {
   info: {
-    licenseKey: 'YOUR_LICENSE_KEY',
-    beacon: 'YOUR_BEACON_URL',
-    applicationID: 'YOUR_APP_ID'
+    licenseKey:    'YOUR_LICENSE_KEY',
+    beacon:        'YOUR_BEACON_URL',
+    applicationID: 'YOUR_APP_ID',
   },
   customData: {
-    // Required for identification
-    contentTitle: videoMetadata.title,
-    userId: currentUser.id,
-
-    // Custom attributes for your deployment
-    subscriptionTier: 'premium',      // User subscription level
-    contentProvider: 'studio-abc',    // Content source
-    region: 'us-west-2',              // Geographic region
-    cdnProvider: 'cloudflare',        // CDN being used
-    deviceType: 'desktop',            // Device category
-    appVersion: '2.1.0',              // Your app version
-    campaign: 'spring-promo'          // Marketing campaign
-  }
+    contentTitle:     videoMetadata.title,
+    userId:           currentUser.id,
+    subscriptionTier: 'premium',
+    contentProvider:  'studio-abc',
+    region:           'us-west-2',
+    cdnProvider:      'cloudflare',
+    deviceType:       'desktop',
+    appVersion:       '2.1.0',
+    campaign:         'spring-promo',
+  },
 });
 ```
 
@@ -242,38 +318,30 @@ FACET region SINCE 1 hour ago
 
 ### 4. Gradual Rollout with Feature Flags
 
-When deploying to production, use feature flags to enable the tracker gradually. This helps you:
-
-- Validate data collection without impacting all users
-- Monitor performance impact at scale
-- Catch issues before full deployment
-- Control monitoring costs
+When deploying to production, use feature flags to enable the tracker gradually:
 
 ```javascript
-// Example using a feature flag
 const rolloutPercentage = 5; // Start with 5% of users
 
 function shouldEnableTracking(userId) {
-  // Simple percentage-based rollout
   const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return (hash % 100) < rolloutPercentage;
 }
 
 const player = document.getElementById('myVideo');
 
-// Only initialize tracker if user is in rollout
 if (shouldEnableTracking(currentUser.id)) {
   const tracker = new Html5Tracker(player, {
     info: {
-      licenseKey: 'YOUR_LICENSE_KEY',
-      beacon: 'YOUR_BEACON_URL',
-      applicationID: 'YOUR_APP_ID'
+      licenseKey:    'YOUR_LICENSE_KEY',
+      beacon:        'YOUR_BEACON_URL',
+      applicationID: 'YOUR_APP_ID',
     },
     customData: {
       contentTitle: videoMetadata.title,
-      userId: currentUser.id,
-      rolloutGroup: `${rolloutPercentage}%`  // Track which rollout group
-    }
+      userId:       currentUser.id,
+      rolloutGroup: `${rolloutPercentage}%`,
+    },
   });
 }
 ```
@@ -294,8 +362,8 @@ if (shouldEnableTracking(currentUser.id)) {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `qoeAggregate` | boolean | `false` | Enable Quality of Experience event aggregation. Set to `true` to collect QoE metrics like startup time, buffering, and playback quality. |
-| `qoeIntervalFactor` | number | `1` | Controls QoE event frequency. A value of `N` sends QoE events once every N harvest cycles. Must be a positive integer. QoE events are always included on first and final harvest cycles. |
+| `qoeAggregate` | boolean | `true` | Enable Quality of Experience event aggregation. Collects QoE metrics like startup time, buffering, and playback quality. |
+| `qoeIntervalFactor` | number | `2` | Controls QoE event frequency. A value of `N` sends QoE events once every N harvest cycles. Must be a positive integer. QoE events are always included on first and final harvest cycles. |
 
 ### Custom Data
 
@@ -303,11 +371,11 @@ Add custom attributes to all events:
 
 ```javascript
 customData: {
-  contentTitle: 'My Video Title',      // Override video title
-  customPlayerName: 'MyPlayer',        // Custom player identifier
-  customPlayerVersion: '1.0.0',        // Custom player version
-  userId: '12345',                     // User identifier
-  contentSeries: 'Season 1',           // Series information
+  contentTitle:        'My Video Title',   // Override video title
+  customPlayerName:    'MyPlayer',         // Custom player identifier
+  customPlayerVersion: '1.0.0',            // Custom player version
+  userId:              '12345',            // User identifier
+  contentSeries:       'Season 1',         // Series information
   // Add any custom attributes you need
 }
 ```
@@ -339,10 +407,10 @@ Send custom events with arbitrary attributes.
 
 ```javascript
 tracker.sendCustom('VideoBookmarked', 'playing', {
-  timestamp: Date.now(),
-  position: player.currentTime,
-  userId: 'user-12345',
-  bookmarkId: 'bookmark-789'
+  timestamp:  Date.now(),
+  position:   player.currentTime,
+  userId:     'user-12345',
+  bookmarkId: 'bookmark-789',
 });
 ```
 
@@ -353,44 +421,38 @@ Update tracker configuration after initialization.
 tracker.sendOptions({
   customData: {
     contentTitle: 'New Video Title',
-    season: '1',
-    episode: '3'
-  }
+    season:       '1',
+    episode:      '3',
+  },
 });
 ```
 
 ### Example: Complete Integration
 
 ```javascript
-import Html5Tracker from '@newrelic/video-html5';
+import Html5Tracker from '@newrelic/video-html5/browser';
 
-// Get a reference to the video element
 const player = document.getElementById('myVideo');
 
-// Initialize tracker
 const tracker = new Html5Tracker(player, {
   info: {
-    licenseKey: 'YOUR_LICENSE_KEY',
-    beacon: 'YOUR_BEACON_URL',
-    applicationID: 'YOUR_APP_ID'
+    licenseKey:    'YOUR_LICENSE_KEY',
+    beacon:        'YOUR_BEACON_URL',
+    applicationID: 'YOUR_APP_ID',
   },
   config: {
-    qoeAggregate: true
-  }
+    qoeAggregate: true,
+  },
 });
 
-// Set user context
 tracker.setUserId('user-12345');
-
-// Configure reporting interval
 tracker.setHarvestInterval(30000);
 
-// Send custom events
 player.addEventListener('volumechange', () => {
   tracker.sendCustom('VolumeChanged', 'playing', {
-    muted: player.muted,
-    volume: player.volume,
-    timestamp: Date.now()
+    muted:     player.muted,
+    volume:    player.volume,
+    timestamp: Date.now(),
   });
 });
 ```
