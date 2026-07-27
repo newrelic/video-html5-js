@@ -18,24 +18,6 @@ import { getRegisteredHarvester } from '@newrelic/video-core';
  * touches a harvester directly. Routing decisions happen inside
  * `recordEvent.js` based on `att.src`.
  *
- * Mirrors `VegaTracker` from `@newrelic/video-videojs`. Customers pick the
- * right package for their player; both ship the same `att.src='Vega'`
- * contract to the mobile collector.
- *
- * @example
- * import { VegaTracker } from '@newrelic/video-html5';
- *
- * const tracker = new VegaTracker(htmlMediaElement, {
- *   info: {
- *     accountId: '<NR account id>',
- *     applicationToken: '<NR app token>',
- *     endpoint: 'US' // 'US' | 'EU' | 'staging'
- *   },
- *   config: {
- *     qoeAggregate: true,
- *     qoeIntervalFactor: 5
- *   }
- * });
  */
 export default class VegaTracker extends Html5Tracker {
   constructor(player, options) {
