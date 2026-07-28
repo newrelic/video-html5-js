@@ -1,3 +1,19 @@
+# [4.2.0](https://github.com/newrelic/video-html5-js/compare/v4.1.2...v4.2.0) (2026-07-28)
+
+
+### Bug Fixes
+
+* Remove unused comment ([6142d4a](https://github.com/newrelic/video-html5-js/commit/6142d4a5e9598264e697922f03dc104462b407dd))
+* Remove webpack-debug.js file ([f2d8c24](https://github.com/newrelic/video-html5-js/commit/f2d8c2477ca4814e6aea542e0f4a3c1b8370e2fc))
+* Update ReadMe file ([66e3a00](https://github.com/newrelic/video-html5-js/commit/66e3a0099a084d3119ddcfc5a04f8abd8412a761))
+* Update ReadMe file ([d72c0ea](https://github.com/newrelic/video-html5-js/commit/d72c0eac6c90c3b64480f8fcc84452123b3acfc0))
+
+
+### Features
+
+* Add Vega Video Monitoring support ([a27e1a3](https://github.com/newrelic/video-html5-js/commit/a27e1a3ea7c48a2dd6daffd2f39cf81ca9220897))
+* Update semantic version ([bdefc2d](https://github.com/newrelic/video-html5-js/commit/bdefc2d5905917d93618b26f842ab01bccab271e))
+
 ## [4.1.2](https://github.com/newrelic/video-html5-js/compare/v4.1.1...v4.1.2) (2026-06-29)
 
 
