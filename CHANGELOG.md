@@ -1,3 +1,10 @@
+## [4.1.2](https://github.com/newrelic/video-html5-js/compare/v4.1.1...v4.1.2) (2026-06-29)
+
+
+### Bug Fixes
+
+* buffer end fix ([693ad73](https://github.com/newrelic/video-html5-js/commit/693ad73e602b6362d25b17fbed56a793229b26f8))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
