@@ -1,9 +1,8 @@
 ## [5.0.1](https://github.com/newrelic/video-html5-js/compare/v5.0.0...v5.0.1) (2026-08-06)
 
+### Bug fixes
 
-### Bug Fixes
-
-* Update video-core version ([064acde](https://github.com/newrelic/video-html5-js/commit/064acdea333375761d327defff39a4f1f9a3245e))
+- Updated the bundled `@newrelic/video-core` dependency to v5.0.1, adding Japan (JP) region collector support for Vega/Fire TV tracking.
 
 ## [5.0.0] - 2026-07-29
 
