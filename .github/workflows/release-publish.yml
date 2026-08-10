@@ -105,9 +105,10 @@ jobs:
           if gh release view "$TAG" &>/dev/null; then
             echo "Release $TAG already exists — skipping"
           else
+            python3 .github/scripts/extract-changelog-notes.py CHANGELOG.md "$VERSION" > release-notes.md
             gh release create "$TAG" \
               --title "Release $TAG" \
-              --generate-notes \
+              --notes-file release-notes.md \
               --verify-tag
             echo "Created GitHub Release $TAG"
           fi
