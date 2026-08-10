@@ -114,10 +114,9 @@ jobs:
             if [[ -z "${body}" ]]; then
               body="_No new features, improvements, or bug fixes for this release._"
             fi
-            printf '%s\n' "${body}" > release-notes.md
             gh release create "$TAG" \
               --title "Release $TAG" \
-              --notes-file release-notes.md \
+              --notes "${body}" \
               --verify-tag
             echo "Created GitHub Release $TAG"
           fi
