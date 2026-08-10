@@ -105,7 +105,16 @@ jobs:
           if gh release view "$TAG" &>/dev/null; then
             echo "Release $TAG already exists — skipping"
           else
-            python3 .github/scripts/extract-changelog-notes.py CHANGELOG.md "$VERSION" > release-notes.md
+            body=$(awk -v ver="${VERSION}" '
+              found && /^## +\[|^# / { exit }
+              found { print }
+              $0 ~ ("^## +\\[" ver "\\]") { found=1 }
+            ' CHANGELOG.md | sed -E 's/ *\(\[[0-9a-f]{6,40}\]\([^)]*\)\) *$//')
+            body=$(printf '%s' "${body}" | sed '/[^[:space:]]/,$!d' | sed -e :a -e '/^[[:space:]]*$/{$d;N;ba}')
+            if [[ -z "${body}" ]]; then
+              body="_No new features, improvements, or bug fixes for this release._"
+            fi
+            printf '%s\n' "${body}" > release-notes.md
             gh release create "$TAG" \
               --title "Release $TAG" \
               --notes-file release-notes.md \
