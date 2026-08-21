@@ -44,9 +44,6 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | contentTitle             | The title of the video.                                                                                                                            |
 | contentIsLive            | True if the video is live.                                                                                                                         |
 | contentBitrate                  | Bitrate (in bits) of the video.                                                                                                                    |
-| contentManifestBitrate          | Bitrate (in bits per second) from the manifest/playlist file. *(verify)*                                                                           |
-| contentSegmentDownloadBitrate   | Measured bitrate (in bits per second) based on segment download performance. *(verify)*                                                            |
-| contentNetworkDownloadBitrate   | Network download bitrate (in bits per second) measured during content delivery. *(verify)*                                                         |
 | contentRenditionName            | Name of the rendition (e.g., 1080p).                                                                                                               |
 | contentRenditionBitrate         | Target Bitrate of the rendition.                                                                                                                   |
 | contentRenditionHeight   | Rendition actual Height (before re-scaling).                                                                                                       |
