@@ -71,7 +71,6 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | instrumentation.provider | Player/agent name.                                                                                                                                 |
 | instrumentation.name     | Name of the instrumentation collecting the data.                                                                                                   |
 | instrumentation.version  | Agent’s version.                                                                                                                                   |
-
 | timeSinceRequested       | Time (in milliseconds) since the video was requested.                                                                                              |
 | timeSinceStarted         | Time (in milliseconds) since the video started playing.                                                                                            |
 | timeSinceTrackerReady    | Time (in milliseconds) since the tracker was initialized (PLAYER_READY).                                                                           |

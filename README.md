@@ -399,7 +399,7 @@ Configure how frequently data is sent to New Relic. Accepts values between 1000m
 tracker.setHarvestInterval(30000); // Send data every 30 seconds
 ```
 
-### Live Stream Configuration
+#### Live Stream Configuration
 
 **Recommendations for Live Content:**
 
