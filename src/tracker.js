@@ -55,7 +55,9 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
   }
 
   getSrc() {
-    return this.player.currentSrc;
+    const src = this.player.currentSrc;
+    if (src && src.startsWith('blob:')) return null;
+    return src;
   }
 
   isMuted() {
