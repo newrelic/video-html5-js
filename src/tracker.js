@@ -55,7 +55,12 @@ export default class Html5Tracker extends nrvideo.VideoTracker {
   }
 
   getSrc() {
-    return this.player.currentSrc;
+    const src = this.player.currentSrc;
+    // hls.js/dash.js/shaka set video.src to a blob: MSE object URL; there is no JS API
+    // to recover the original manifest URL from a MediaSource, so return null instead
+    // of sending a useless blob: string as contentSrc to the collector.
+    if (src && src.startsWith('blob:')) return null;
+    return src;
   }
 
   isMuted() {
