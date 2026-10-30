@@ -1,16 +1,10 @@
-## <small>5.0.2 (2026-10-23)</small>
-- **fix: upgrade Node.js from 7 to 22 (CVE-2026-105481..106074)**
-- **chore: add sec commit type for security releases (NR-619788)**
-- **chore: align semantic-release preset and workflows with docs release-notes format**
-- **chore: correct DATAMODEL.md attribute errors and omissions**
-- **chore: derive docs MDX filename date from release date, not workflow-run date**
-- **chore: Udate Permission**
-- **chore: update release notes workflow to new docs standards (NR-619788)**
-- **chore: Update video-core-workflow name**
-- **docs: document the CHANGELOG.md template/structure in DEVELOPING.md**
-- **docs: rewrite v5.0.1 changelog entry with video-core JP region fix context**
-- **refactor: inline changelog-notes extraction as awk/sed, drop python script**
-- **refactor: pass release notes body inline instead of via temp file**
+## [5.0.2](https://github.com/newrelic/video-html5-js/compare/v5.0.1...v5.0.2) (2026-10-30)
+
+### Changed
+
+- **Video Core:** Updated the bundled `@newrelic/video-core` dependency to v5.1.1 and pinned it to this exact version (previously `^5.0.1`), so every build uses the same core release.
+- **Dependency pinning:** `dependencies` and `devDependencies` are now pinned to the exact versions already resolved in `package-lock.json`, so a fresh install no longer picks up newly published releases of build tooling.
+- **Node.js base image:** Upgraded the Docker base image from Node.js 7 to 22 (CVE-2026-105481..106074).
 
 ## [5.0.1](https://github.com/newrelic/video-html5-js/compare/v5.0.0...v5.0.1) (2026-08-06)
 
