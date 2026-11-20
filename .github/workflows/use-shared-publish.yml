@@ -1,17 +1,30 @@
 name: Build and Publish
 
+# Beta releases: run manually with `beta-release` checked, choosing any branch
+# in "Use workflow from". Publishes <next-patch>-beta.<branch-slug>.<run-number>
+# under the npm `beta` dist-tag; no git tag, GitHub Release or S3 upload.
+
 on:
   workflow_dispatch:
+    inputs:
+      beta-release:
+        description: 'Publish a beta prerelease from the selected branch (npm dist-tag "beta")'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
 
 permissions:
   contents: write
   id-token: write
+  attestations: write  # required by npm-publish.yml's build provenance step
 
 jobs:
   build-and-publish:
-    uses: newrelic/video-core-js/.github/workflows/npm-publish.yml@master
+    # TODO: switch back to @master once the beta-release change lands on video-core-js master
+    uses: newrelic/video-core-js/.github/workflows/npm-publish.yml@beta-release
     with:
+      beta-release: ${{ inputs.beta-release == true }}
       s3-path: 'media-agents/browser/html5'
       file-to-upload: 'dist/umd/newrelic-video-html5.min.js'
     secrets:
