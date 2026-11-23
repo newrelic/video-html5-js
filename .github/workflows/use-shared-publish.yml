@@ -5,8 +5,9 @@ on:
   workflow_call:
 
 permissions:
-  contents: write
-  id-token: write
+  contents: write      # video-core-js creates the GitHub Release on behalf of this repo
+  id-token: write      # npm Trusted Publishing + attestation OIDC
+  attestations: write  # actions/attest-build-provenance
 
 jobs:
   build-and-publish:
@@ -15,6 +16,4 @@ jobs:
     with:
       s3-path: 'media-agents/browser/html5'
       file-to-upload: 'dist/umd/newrelic-video-html5.min.js'
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    secrets: inherit   # passes GITHUB_TOKEN + AWS keys so video-core-js can create the release
