@@ -1,0 +1,50 @@
+name: CDN Integrity Monitor
+
+# Detects drift between what was released and what S3 is currently serving.
+# Every release attaches an integrity manifest; this workflow re-checks recent
+# releases against the S3 origin on a schedule using only public endpoints.
+# Notifications are sent from a separate job so the check job needs no secrets.
+
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cdn-integrity-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Verify served assets against release manifests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.x'
+      - name: Verify S3 assets against release manifests
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node .github/scripts/cdn-integrity-monitor.mjs --repo "$GITHUB_REPOSITORY" --releases 5
+
+  notify:
+    name: Notify on integrity failure
+    needs: monitor
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send Slack notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          text=":rotating_light: CDN integrity monitor failed for video-html5-js: served assets differ from a release manifest. ${RUN_URL}"
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{\"text\": \"$text\"}"
