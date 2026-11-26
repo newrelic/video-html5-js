@@ -32,7 +32,7 @@ jobs:
       version: ${{ steps.check.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -41,9 +41,15 @@ jobs:
 
       - name: Check for new version
         id: check
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            VERSION="${{ github.event.inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            if ! echo "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$'; then
+              echo "Invalid version format: $INPUT_VERSION (expected X.Y.Z)"
+              exit 1
+            fi
+            VERSION="$INPUT_VERSION"
           else
             VERSION=$(jq -r '.version' package.json)
           fi
@@ -69,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -95,46 +101,17 @@ jobs:
             echo "Created and pushed tag $TAG"
           fi
 
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION="${{ needs.check-release.outputs.version }}"
-          TAG="v$VERSION"
-
-          if gh release view "$TAG" &>/dev/null; then
-            echo "Release $TAG already exists — skipping"
-          else
-            body=$(awk -v ver="${VERSION}" '
-              found && /^## +\[|^# / { exit }
-              found { print }
-              $0 ~ ("^## +\\[" ver "\\]") { found=1 }
-            ' CHANGELOG.md | sed -E 's/ *\(\[[0-9a-f]{6,40}\]\([^)]*\)\) *$//')
-            body=$(printf '%s' "${body}" | sed '/[^[:space:]]/,$!d' | sed -e :a -e '/^[[:space:]]*$/{$d;N;ba}')
-            if [[ -z "${body}" ]]; then
-              body="_No new features, improvements, or bug fixes for this release._"
-            fi
-            gh release create "$TAG" \
-              --title "Release $TAG" \
-              --notes "${body}" \
-              --verify-tag
-            echo "Created GitHub Release $TAG"
-          fi
-
       - name: Trigger Build and Publish
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh workflow run use-shared-publish.yml --ref master
           echo "Triggered use-shared-publish.yml"
-
-      - name: Trigger Release Notes Docs PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION="${{ needs.check-release.outputs.version }}"
-          gh workflow run release-notes-docs-pr.yml --ref master --field tag="v$VERSION" --field dry_run=false
-          echo "Triggered release-notes-docs-pr.yml for v$VERSION"
+          echo "GitHub Release and npm/S3 publish will complete via use-shared-publish.yml"
 
       - name: Summary
-        run: echo "Release published" >> $GITHUB_STEP_SUMMARY
+        run: |
+          VERSION="${{ needs.check-release.outputs.version }}"
+          echo "## Tag Created" >> $GITHUB_STEP_SUMMARY
+          echo "**Version**: v$VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "GitHub Release and publish will complete via \`use-shared-publish.yml\`." >> $GITHUB_STEP_SUMMARY
