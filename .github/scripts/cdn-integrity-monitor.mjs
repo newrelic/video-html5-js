@@ -10,6 +10,21 @@ import { readFile, appendFile } from 'node:fs/promises'
 const MANIFEST_ASSET = 'integrity-manifest.json'
 const S3_BASE = 'https://download.newrelic.com/media-agents/browser/html5'
 
+// Generous grace period: the release is public as soon as it is published, but the
+// manifest is only attached and S3 files only land after the s3-upload job completes.
+// Used as a fallback when the upload run cannot be looked up via the API.
+const RELEASE_GRACE_MS = 2 * 60 * 60 * 1000 // 2 hours
+
+function isWithinGrace (publishedAt, now = Date.now()) {
+  if (!publishedAt) return false
+  const published = new Date(publishedAt).getTime()
+  return Number.isFinite(published) && now - published < RELEASE_GRACE_MS
+}
+
+function isPipelineActive (run) {
+  return Boolean(run) && run.status !== 'completed'
+}
+
 function parseArgs (argv) {
   const options = { repo: process.env.GITHUB_REPOSITORY || 'newrelic/video-html5-js', releases: 5, manifests: [] }
   for (let i = 0; i < argv.length; i++) {
@@ -41,16 +56,49 @@ function sha384 (buffer) {
   return `sha384-${createHash('sha384').update(Buffer.from(buffer)).digest('base64')}`
 }
 
+// Lists recent s3-upload.yml runs so we can tell whether the upload for the newest
+// release is still in progress. Returns null when the API is unreachable (callers
+// fall back to isWithinGrace). Requires actions: read permission on the job.
+async function listUploadRuns (repo, headers) {
+  try {
+    const response = await fetchWithRetry(
+      `https://api.github.com/repos/${repo}/actions/workflows/s3-upload.yml/runs?per_page=20`,
+      { headers }
+    )
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const { workflow_runs: runs = [] } = await response.json()
+    return runs
+  } catch (error) {
+    console.log(`::warning::Could not list S3 upload runs (${error.message}); using a time window to identify new releases.`)
+    return null
+  }
+}
+
 async function discoverManifests (options) {
   const headers = { Accept: 'application/vnd.github+json' }
   if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   const response = await fetchWithRetry(`https://api.github.com/repos/${options.repo}/releases?per_page=30`, { headers })
   if (!response.ok) throw new Error(`Could not list releases: HTTP ${response.status}`)
 
+  const uploadRuns = await listUploadRuns(options.repo, headers)
+
+  // A release is pending if its S3 upload run is still active.
+  // Fallback: if no matching run is found, treat the release as pending within the grace window.
+  const isPending = (release) => {
+    if (uploadRuns === null) return isWithinGrace(release.published_at)
+    const matchingRun = uploadRuns.find(r => new Date(r.created_at) >= new Date(release.published_at))
+    return matchingRun ? isPipelineActive(matchingRun) : isWithinGrace(release.published_at)
+  }
+
   const found = []
   let skipped = 0
   for (const release of await response.json()) {
     if (release.draft || release.prerelease) continue
+    if (isPending(release)) {
+      console.log(`Skipping ${release.tag_name} — S3 upload may still be in progress.`)
+      skipped++
+      continue
+    }
     const asset = release.assets?.find(a => a.name === MANIFEST_ASSET)
     if (!asset) { skipped++; continue }
     const download = await fetchWithRetry(asset.browser_download_url)
@@ -58,7 +106,7 @@ async function discoverManifests (options) {
     found.push({ version: release.tag_name.replace(/^v/, ''), manifest: await download.json() })
     if (found.length >= options.releases) break
   }
-  console.log(`Found ${found.length} release manifest(s); ${skipped} release(s) without one skipped.`)
+  console.log(`Found ${found.length} release manifest(s); ${skipped} release(s) without one were skipped.`)
   return found
 }
 
